@@ -1,6 +1,8 @@
 import { getSupabaseAdmin } from '@/utils/supabase-admin';
 import ProductList from '@/components/admin/ProductList';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminProducts() {
     // Fetch initial data server-side using Service Role for speed and SEO (if public)
     const supabaseAdmin = getSupabaseAdmin();

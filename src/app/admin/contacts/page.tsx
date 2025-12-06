@@ -1,6 +1,8 @@
 import { getSupabaseAdmin } from '@/utils/supabase-admin';
 import { Mail, Clock, Trash2 } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminContacts() {
     const supabaseAdmin = getSupabaseAdmin();
     const { data: messages } = await supabaseAdmin
