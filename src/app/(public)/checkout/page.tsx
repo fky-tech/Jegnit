@@ -145,7 +145,7 @@ export default function CheckoutPage() {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
                                 <div className="space-y-3">
-                                    <label className="flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:border-[#ff6a00] transition-colors bg-gray-50 border-[#ff6a00]/30">
+                                    <label className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${formData.payment === 'cod' ? 'border-[#ff6a00] bg-[#ff6a00]/5' : 'border-gray-200 hover:border-[#ff6a00]/30'}`}>
                                         <input
                                             type="radio"
                                             name="payment"
@@ -155,6 +155,36 @@ export default function CheckoutPage() {
                                             className="text-[#ff6a00] focus:ring-[#ff6a00]"
                                         />
                                         <span className="font-bold text-gray-900">Cash on Delivery</span>
+                                    </label>
+
+                                    <label className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${formData.payment === 'telebirr' ? 'border-[#ff6a00] bg-[#ff6a00]/5' : 'border-gray-200 hover:border-[#ff6a00]/30'}`}>
+                                        <input
+                                            type="radio"
+                                            name="payment"
+                                            value="telebirr"
+                                            checked={formData.payment === 'telebirr'}
+                                            onChange={e => setFormData({ ...formData, payment: e.target.value })}
+                                            className="text-[#ff6a00] focus:ring-[#ff6a00]"
+                                        />
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-gray-900">Telebirr</span>
+                                            <span className="text-xs text-gray-500">Pay via App</span>
+                                        </div>
+                                    </label>
+
+                                    <label className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${formData.payment === 'cbe' ? 'border-[#ff6a00] bg-[#ff6a00]/5' : 'border-gray-200 hover:border-[#ff6a00]/30'}`}>
+                                        <input
+                                            type="radio"
+                                            name="payment"
+                                            value="cbe"
+                                            checked={formData.payment === 'cbe'}
+                                            onChange={e => setFormData({ ...formData, payment: e.target.value })}
+                                            className="text-[#ff6a00] focus:ring-[#ff6a00]"
+                                        />
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-gray-900">CBE (Commercial Bank)</span>
+                                            <span className="text-xs text-gray-500">Bank Transfer</span>
+                                        </div>
                                     </label>
                                 </div>
                             </div>

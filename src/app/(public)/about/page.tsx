@@ -18,7 +18,7 @@ export default function AboutPage() {
             </div>
 
             <div className="container max-w-6xl mx-auto px-6 py-24">
-                <Link href="/" className="inline-flex items-center text-gray-400 hover:text-[#ff6a00] mb-12 transition-colors -ml-1 text-sm font-medium tracking-wide">
+                <Link href="/" className="mt-7 inline-flex items-center text-gray-400 hover:text-[#ff6a00] mb-12 transition-colors -ml-1 text-sm font-medium tracking-wide">
                     <ArrowLeft className="w-4 h-4 mr-2" /> RETURN HOME
                 </Link>
 
@@ -74,7 +74,7 @@ export default function AboutPage() {
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src="/logo.png" className="w-full h-full object-cover" />
+                                    <img src="https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png" className="w-full h-full object-cover" />
                                 </div>
                                 <div>
                                     <p className="text-xs font-bold text-gray-900 uppercase">Jegnit Team</p>
@@ -88,7 +88,7 @@ export default function AboutPage() {
                 {/* Values Section */}
                 <div className="mt-40 mb-20 text-center">
                     <h3 className="text-2xl font-bold mb-16 text-gray-900">Why Choose Jegnit?</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    <div className="pt-9 grid grid-cols-1 md:grid-cols-3 gap-12">
                         <div className="p-8 border border-gray-100 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-xl transition-all duration-300 group">
                             <h4 className="text-xl font-bold mb-4 group-hover:text-[#ff6a00] transition-colors">Premium Materials</h4>
                             <p className="text-gray-600">Sourced from the finest suppliers to ensure durability and a soft touch against your skin.</p>
