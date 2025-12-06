@@ -1,6 +1,8 @@
 import { getSupabaseAdmin } from '@/utils/supabase-admin';
 import { ShoppingBag, Users, DollarSign, Package } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminDashboard() {
     const supabaseAdmin = getSupabaseAdmin();
     // Fetch real counts concurrently
@@ -24,7 +26,7 @@ export default async function AdminDashboard() {
             <h1 className="text-3xl font-bold mb-8 text-gray-800">Dashboard</h1>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 pt-7">
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <div className="flex items-center justify-between mb-4">
                         <div className="p-3 bg-orange-100 rounded-lg text-[#ff6a00]">

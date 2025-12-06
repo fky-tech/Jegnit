@@ -82,7 +82,7 @@ export default function ProductList({ initialProducts }: ProductListProps) {
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex justify-between items-center mb-8 pt-7">
                 <h1 className="text-3xl font-bold text-gray-800">Products</h1>
                 <button
                     onClick={openAddModal}
@@ -93,62 +93,64 @@ export default function ProductList({ initialProducts }: ProductListProps) {
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <table className="w-full text-left">
-                    <thead className="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                            <th className="px-6 py-4 font-semibold text-gray-600">Image</th>
-                            <th className="px-6 py-4 font-semibold text-gray-600">Name</th>
-                            <th className="px-6 py-4 font-semibold text-gray-600">Price</th>
-                            <th className="px-6 py-4 font-semibold text-gray-600 text-center">Featured</th>
-                            <th className="px-6 py-4 font-semibold text-gray-600">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {products.length === 0 ? (
-                            <tr><td colSpan={5} className="p-10 text-center text-gray-400">No products found. Add your first one!</td></tr>
-                        ) : (
-                            products.map((p) => (
-                                <tr key={p.id} className="hover:bg-gray-50 transition-colors">
-                                    <td className="px-6 py-4">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
-                                            src={p.img || '/placeholder.png'}
-                                            alt={p.name}
-                                            className="w-12 h-12 rounded-lg object-cover border border-gray-200"
-                                        />
-                                    </td>
-                                    <td className="px-6 py-4 font-medium text-gray-900">{p.name}</td>
-                                    <td className="px-6 py-4 text-gray-600">ETB {p.price}</td>
-                                    <td className="px-6 py-4 text-center">
-                                        {p.featured ? (
-                                            <span className="inline-flex items-center justify-center w-6 h-6 bg-green-100 text-green-600 rounded-full">
-                                                <Check className="w-3 h-3" />
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center justify-center w-6 h-6 bg-gray-100 text-gray-400 rounded-full">
-                                                <XIcon className="w-3 h-3" />
-                                            </span>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4 flex gap-3">
-                                        <button
-                                            onClick={() => openEditModal(p)}
-                                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit"
-                                        >
-                                            <Edit className="w-4 h-4" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(p.id)}
-                                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left min-w-[600px]">
+                        <thead className="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th className="px-6 py-4 font-semibold text-gray-600">Image</th>
+                                <th className="px-6 py-4 font-semibold text-gray-600">Name</th>
+                                <th className="px-6 py-4 font-semibold text-gray-600">Price</th>
+                                <th className="px-6 py-4 font-semibold text-gray-600 text-center">Featured</th>
+                                <th className="px-6 py-4 font-semibold text-gray-600 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {products.length === 0 ? (
+                                <tr><td colSpan={5} className="p-10 text-center text-gray-400">No products found. Add your first one!</td></tr>
+                            ) : (
+                                products.map((p) => (
+                                    <tr key={p.id} className="hover:bg-gray-50 transition-colors">
+                                        <td className="px-6 py-4">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img
+                                                src={p.img || '/placeholder.png'}
+                                                alt={p.name}
+                                                className="w-12 h-12 rounded-lg object-cover border border-gray-200"
+                                            />
+                                        </td>
+                                        <td className="px-6 py-4 font-medium text-gray-900">{p.name}</td>
+                                        <td className="px-6 py-4 text-gray-600">ETB {p.price}</td>
+                                        <td className="px-6 py-4 text-center">
+                                            {p.featured ? (
+                                                <span className="inline-flex items-center justify-center w-6 h-6 bg-green-100 text-green-600 rounded-full">
+                                                    <Check className="w-3 h-3" />
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center justify-center w-6 h-6 bg-gray-100 text-gray-400 rounded-full">
+                                                    <XIcon className="w-3 h-3" />
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4 flex justify-end gap-3">
+                                            <button
+                                                onClick={() => openEditModal(p)}
+                                                className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit"
+                                            >
+                                                <Edit className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(p.id)}
+                                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <ProductModal

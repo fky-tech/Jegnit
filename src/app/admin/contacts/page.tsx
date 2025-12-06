@@ -14,7 +14,7 @@ export default async function AdminContacts() {
         <div>
             <h1 className="text-3xl font-bold mb-8 text-gray-800">Messages</h1>
 
-            <div className="grid gap-6">
+            <div className="grid gap-6 pt-7">
                 {(!messages || messages.length === 0) ? (
                     <div className="p-12 text-center text-gray-400 bg-white rounded-xl border border-gray-100">
                         <Mail className="w-12 h-12 mx-auto mb-4 opacity-20" />

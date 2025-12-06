@@ -36,8 +36,8 @@ export default function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-4 text-white">
-                    {/* Cart Button */}
-                    <button onClick={toggleDrawer} className="relative hover:text-white/80 transition-colors">
+                    {/* Cart Button - Hidden on Mobile */}
+                    <button onClick={toggleDrawer} className="relative hover:text-white/80 transition-colors hidden md:block">
                         <ShoppingBag className="w-5 h-5" />
                         <span className="absolute -top-2 -right-2 bg-white text-[#ff6a00] text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{cartCount}</span>
                     </button>
@@ -50,7 +50,7 @@ export default function Navbar() {
 
             {/* Mobile Menu */}
             {mobileMenuOpen && (
-                <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4 px-6 flex flex-col gap-4 text-gray-800">
+                <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4 px-6 flex flex-col items-center gap-4 text-gray-800 text-center">
                     <Link href="/" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Home</Link>
                     <Link href="/shop" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Shop</Link>
                     <Link href="/about" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>About</Link>

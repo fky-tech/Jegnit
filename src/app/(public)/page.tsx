@@ -41,7 +41,7 @@ export default function Home() {
       <section className="relative min-h-[85vh] flex items-center bg-white">
         <div className="container grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pt-20">
           {/* Hero Text */}
-          <div className="order-2 lg:order-1 space-y-3 animate-fade-in-up">
+          <div className="order-1 lg:order-1 space-y-3 animate-fade-in-up text-center lg:text-left">
             <span className="inline-block px-3 py-1 bg-gray-100 text-[#ff6a00] text-xs font-bold tracking-widest uppercase rounded-sm">
               Luxury Shapewear
             </span>
@@ -49,11 +49,11 @@ export default function Home() {
               Sculpt Your <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#ff6a00] to-[#ff914d]">Power</span>
             </h1>
-            <p className="text-lg text-gray-600 leading-relaxed max-w-lg">
+            <p className="text-lg text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
               Designed for the elegance and strength of Ethiopian women.
               Experience the perfect blend of comfort, support, and confidence.
             </p>
-            <div className="pt-4 flex flex-wrap gap-4">
+            <div className="pt-4 flex flex-wrap gap-4 justify-center lg:justify-start">
               <Link href="/shop" className="inline-flex items-center justify-center px-8 py-3.5 bg-[#ff6a00] text-white font-bold text-base tracking-wide rounded-lg hover:bg-[#ff8533] transition-all shadow-lg shadow-orange-100">
                 Shop Collection <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
@@ -64,7 +64,7 @@ export default function Home() {
           </div>
 
           {/* Hero Image */}
-          <div className="lg:py-32 pt-20 order-1 lg:order-2 relative h-[500px] lg:h-[700px] w-full flex items-center justify-center">
+          <div className="lg:py-32 pt-10 order-2 lg:order-2 relative h-[400px] lg:h-[700px] w-full flex items-center justify-center">
             <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -79,23 +79,25 @@ export default function Home() {
       </section>
 
       {/* Benefits Strip */}
-      <section className="py-10 border-y border-gray-100 bg-gray-900">
-        <div className="container flex flex-wrap justify-between gap-8 md:gap-0">
-          <div className="flex items-center gap-4 flex-1 justify-center md:justify-start">
+      <section className="py-10 border-y border-gray-100 bg-gray-900 mt-14 lg:mt-0">
+        <div className="container grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-0 divide-y md:divide-y-0 md:divide-x divide-gray-800">
+          <div className="flex items-center justify-center md:justify-start gap-4 pb-4 md:pb-0 md:pr-8">
             <div className="p-3 bg-white/10 rounded-full text-[#ff6a00]"><ShieldCheck className="w-6 h-6" /></div>
             <div>
               <h3 className="font-bold text-sm uppercase tracking-wide text-white">Premium Quality</h3>
               <p className="text-xs text-gray-400">Guaranteed durability</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 flex-1 justify-center md:justify-center border-l md:border-l-0 lg:border-l border-gray-800 pl-0 lg:pl-8">
+
+          <div className="flex items-center justify-center md:justify-center gap-4 py-4 md:py-0 md:px-8">
             <div className="p-3 bg-white/10 rounded-full text-[#ff6a00]"><Truck className="w-6 h-6" /></div>
             <div>
               <h3 className="font-bold text-sm uppercase tracking-wide text-white">Reliable Delivery</h3>
               <p className="text-xs text-gray-400">Fast & secure shipping</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 flex-1 justify-center md:justify-end border-l md:border-l-0 lg:border-l border-gray-800 pl-0 lg:pl-8">
+
+          <div className="flex items-center justify-center md:justify-end gap-4 pt-4 md:pt-0 md:pl-8">
             <div className="p-3 bg-white/10 rounded-full text-[#ff6a00]"><Headphones className="w-6 h-6" /></div>
             <div>
               <h3 className="font-bold text-sm uppercase tracking-wide text-white">24/7 Support</h3>

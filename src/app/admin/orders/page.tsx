@@ -12,7 +12,7 @@ export default async function AdminOrders() {
 
     return (
         <div>
-            <h1 className="text-3xl font-bold mb-8 text-gray-800">Orders</h1>
+            <h1 className="text-3xl font-bold mb-8 text-gray-800 pb-7">Orders</h1>
             <OrderTable initialOrders={orders || []} />
         </div>
     );
