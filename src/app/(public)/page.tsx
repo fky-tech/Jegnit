@@ -36,7 +36,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="pt-8 overflow-hidden bg-white text-gray-900">
+    <div className="pt-36 md:pt-8 overflow-hidden bg-white text-gray-900">
       {/* Hero Section - Refined for professional/balanced look */}
       <section className="relative min-h-[85vh] flex items-center bg-white">
         <div className="container grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pt-20">
