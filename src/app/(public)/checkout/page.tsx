@@ -71,7 +71,7 @@ export default function CheckoutPage() {
 
     if (orderComplete) {
         return (
-            <div className="min-h-screen pt-32 pb-20 container text-center max-w-lg mx-auto">
+            <div className="min-h-screen pb-20 container text-center max-w-lg mx-auto" style={{ paddingTop: '200px' }}>
                 <div className="bg-white p-8 rounded-2xl shadow-xl border border-green-100">
                     <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
                         <CheckCircle className="w-10 h-10" />

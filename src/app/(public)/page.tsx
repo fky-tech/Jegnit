@@ -8,7 +8,7 @@ import ProductCard from '@/components/ProductCard';
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [heroImage, setHeroImage] = useState('/hero.png');
+  const [heroImage, setHeroImage] = useState('https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/hero.jpg');
   const [showAllFeatured, setShowAllFeatured] = useState(false);
 
   useEffect(() => {
@@ -82,24 +82,24 @@ export default function Home() {
       <section className="py-10 border-y border-gray-100 bg-gray-900">
         <div className="container flex flex-wrap justify-between gap-8 md:gap-0">
           <div className="flex items-center gap-4 flex-1 justify-center md:justify-start">
-            <div className="p-3 bg-orange-50 rounded-full text-[#ff6a00]"><ShieldCheck className="w-6 h-6" /></div>
+            <div className="p-3 bg-white/10 rounded-full text-[#ff6a00]"><ShieldCheck className="w-6 h-6" /></div>
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wide text-gray-500">Premium Quality</h3>
-              <p className="text-xs text-gray-500">Guaranteed durability</p>
+              <h3 className="font-bold text-sm uppercase tracking-wide text-white">Premium Quality</h3>
+              <p className="text-xs text-gray-400">Guaranteed durability</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 flex-1 justify-center md:justify-center border-l md:border-l-0 lg:border-l border-gray-100 pl-0 lg:pl-8">
-            <div className="p-3 bg-orange-50 rounded-full text-[#ff6a00]"><Truck className="w-6 h-6" /></div>
+          <div className="flex items-center gap-4 flex-1 justify-center md:justify-center border-l md:border-l-0 lg:border-l border-gray-800 pl-0 lg:pl-8">
+            <div className="p-3 bg-white/10 rounded-full text-[#ff6a00]"><Truck className="w-6 h-6" /></div>
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wide text-gray-500">Reliable Delivery</h3>
-              <p className="text-xs text-gray-500">Fast & secure shipping</p>
+              <h3 className="font-bold text-sm uppercase tracking-wide text-white">Reliable Delivery</h3>
+              <p className="text-xs text-gray-400">Fast & secure shipping</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 flex-1 justify-center md:justify-end border-l md:border-l-0 lg:border-l border-gray-100 pl-0 lg:pl-8">
-            <div className="p-3 bg-orange-50 rounded-full text-[#ff6a00]"><Headphones className="w-6 h-6" /></div>
+          <div className="flex items-center gap-4 flex-1 justify-center md:justify-end border-l md:border-l-0 lg:border-l border-gray-800 pl-0 lg:pl-8">
+            <div className="p-3 bg-white/10 rounded-full text-[#ff6a00]"><Headphones className="w-6 h-6" /></div>
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wide text-gray-500">24/7 Support</h3>
-              <p className="text-xs text-gray-500">Here for you always</p>
+              <h3 className="font-bold text-sm uppercase tracking-wide text-white">24/7 Support</h3>
+              <p className="text-xs text-gray-400">Here for you always</p>
             </div>
           </div>
         </div>
@@ -152,7 +152,7 @@ export default function Home() {
             Every body is unique. Our shapewear experts are here to guide you to the perfect size and style for your needs.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/contact" className="px-8 py-3 bg-white text-[#ff6a00] font-bold rounded-lg shadow-lg hover:bg-gray-100 transition-colors">
+            <Link href="/contact" className="px-8 py-3 bg-white !text-gray-900 font-bold rounded-lg shadow-lg hover:bg-gray-50 transition-colors">
               Contact Support
             </Link>
             <Link href="/shop" className="px-8 py-3 bg-transparent border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-colors">

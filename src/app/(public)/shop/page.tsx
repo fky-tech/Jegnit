@@ -43,7 +43,7 @@ export default function ShopPage() {
         <div className="pt-32 pb-20 min-h-screen bg-gray-50">
             <div className="container">
                 <h1 className="text-4xl font-bold mb-8 text-center uppercase tracking-widest text-[#ff6a00]">
-                    The Collection
+                    Our Collections
                 </h1>
 
                 {loading ? (
@@ -54,7 +54,7 @@ export default function ShopPage() {
                     <div className="text-center py-20 text-gray-500">No products found.</div>
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-10">
                             {products.slice(0, visibleCount).map((product) => (
                                 <ProductCard key={product.id} product={product} />
                             ))}
