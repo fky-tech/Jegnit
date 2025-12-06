@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { X, Save, Loader, Plus, Trash2 } from 'lucide-react';
+import { X, Save, Loader, Plus, Trash2, Upload } from 'lucide-react';
+import { supabase } from '@/utils/supabase';
 
 interface ProductModalProps {
     isOpen: boolean;
@@ -58,6 +59,39 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
             setSizes([]);
         }
     }, [initialData, isOpen]);
+
+    const [uploading, setUploading] = useState(false);
+    const BASE_IMAGE_URL = 'https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/';
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+
+        setUploading(true);
+        const file = e.target.files[0];
+        const fileName = file.name; // User requested: use the uploaded filename
+
+        try {
+            // Upload to Supabase Storage
+            const { error } = await supabase
+                .storage
+                .from('product-images')
+                .upload(fileName, file, {
+                    upsert: true // Overwrite if exists, as implied by "last product8.jpg"
+                });
+
+            if (error) throw error;
+
+            // Construct URL per user request
+            const publicUrl = `${BASE_IMAGE_URL}${fileName}`;
+            setFormData(prev => ({ ...prev, img: publicUrl }));
+
+        } catch (error: any) {
+            console.error('Upload Error:', error);
+            alert(`Failed to upload image: ${error.message}`);
+        } finally {
+            setUploading(false);
+        }
+    };
 
     if (!isOpen) return null;
 
@@ -173,15 +207,42 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
+
+                            {/* File Upload */}
+                            <div className="mb-3">
+                                <label className={`flex items-center justify-center w-full p-4 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${uploading ? 'bg-gray-50 border-gray-300' : 'border-gray-300 hover:border-[#ff6a00] hover:bg-[#ff6a00]/5'}`}>
+                                    <div className="flex flex-col items-center gap-2 text-center">
+                                        {uploading ? <Loader className="w-6 h-6 animate-spin text-[#ff6a00]" /> : <Upload className="w-6 h-6 text-gray-400" />}
+                                        <span className="text-sm font-medium text-gray-600">
+                                            {uploading ? 'Uploading...' : 'Click to Upload Image'}
+                                        </span>
+                                        <span className="text-xs text-gray-400">Supports JPG, PNG</span>
+                                    </div>
+                                    <input
+                                        type="file"
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        disabled={uploading}
+                                    />
+                                </label>
+                            </div>
+
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Or paste URL manually:</label>
                             <input
                                 type="url"
                                 placeholder="https://..."
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a00] outline-none"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a00] outline-none text-sm"
                                 value={formData.img}
                                 onChange={e => setFormData({ ...formData, img: e.target.value })}
                             />
-                            <p className="text-xs text-gray-400 mt-1">Paste a direct image link.</p>
+                            {formData.img && (
+                                <div className="mt-2 w-full h-32 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 relative">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={formData.img} alt="Preview" className="w-full h-full object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex items-center gap-2 pt-2">

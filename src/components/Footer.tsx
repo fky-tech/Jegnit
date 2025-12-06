@@ -8,8 +8,12 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
                     {/* Brand */}
                     <div className="space-y-6">
-                        <Link href="/" className="text-3xl font-bold tracking-tighter uppercase">
-                            <span className="text-[#ff6a00]">JEG</span>NIT
+                        <Link href="/" className="flex items-center gap-3">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png" alt="Logo" className="h-10 w-auto" />
+                            <span className="text-3xl font-bold tracking-tighter uppercase">
+                                <span className="text-[#ff6a00]">JEG</span>NIT
+                            </span>
                         </Link>
                         <p className="text-gray-400 leading-relaxed">
                             Luxury shapewear designed to empower and sculpt. Experience the perfect blend of comfort and elegance.

@@ -31,9 +31,13 @@ export default function AdminLayout({
         <div className="flex h-screen bg-gray-100">
             {/* Sidebar */}
             <aside className="w-64 bg-[#111] text-white flex flex-col fixed h-full z-10">
-                <div className="p-6 border-b border-gray-800">
-                    <h2 className="text-2xl font-bold uppercase tracking-widest text-[#ff6a00]">Jegnit</h2>
-                    <p className="text-xs text-gray-400">Admin Console</p>
+                <div className="p-6 border-b border-gray-800 flex items-center gap-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png" alt="Logo" className="h-10 w-auto" />
+                    <div>
+                        <h2 className="text-2xl font-bold uppercase tracking-widest text-[#ff6a00]">Jegnit</h2>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wider">Admin Console</p>
+                    </div>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2">

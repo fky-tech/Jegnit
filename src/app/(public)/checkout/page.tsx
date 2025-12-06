@@ -59,6 +59,19 @@ export default function CheckoutPage() {
             }
 
             setBookingId(data.id);
+
+            // Handle Payment Redirects
+            /* 
+            if (formData.payment === 'telebirr') {
+                window.location.href = 'https://web.telebirr.com.et/';
+                return;
+            } else if (formData.payment === 'cbe') {
+                window.location.href = 'https://combanketh.et/';
+                return;
+            }
+            */
+
+            // Default (COD) - Show Success Message
             setOrderComplete(true);
 
         } catch (error: any) {
@@ -157,34 +170,34 @@ export default function CheckoutPage() {
                                         <span className="font-bold text-gray-900">Cash on Delivery</span>
                                     </label>
 
-                                    <label className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${formData.payment === 'telebirr' ? 'border-[#ff6a00] bg-[#ff6a00]/5' : 'border-gray-200 hover:border-[#ff6a00]/30'}`}>
+                                    <label className="flex items-center gap-3 p-4 border rounded-lg cursor-not-allowed bg-gray-50 border-gray-200 opacity-60 relative overflow-hidden">
                                         <input
                                             type="radio"
                                             name="payment"
                                             value="telebirr"
-                                            checked={formData.payment === 'telebirr'}
-                                            onChange={e => setFormData({ ...formData, payment: e.target.value })}
-                                            className="text-[#ff6a00] focus:ring-[#ff6a00]"
+                                            disabled
+                                            className="text-gray-400 focus:ring-0"
                                         />
                                         <div className="flex flex-col">
-                                            <span className="font-bold text-gray-900">Telebirr</span>
-                                            <span className="text-xs text-gray-500">Pay via App</span>
+                                            <span className="font-bold text-gray-500">Telebirr</span>
+                                            <span className="text-xs text-gray-400">Pay via App</span>
                                         </div>
+                                        <span className="absolute top-2 right-2 bg-gray-200 text-gray-600 text-[10px] uppercase font-bold px-2 py-0.5 rounded">Coming Soon</span>
                                     </label>
 
-                                    <label className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${formData.payment === 'cbe' ? 'border-[#ff6a00] bg-[#ff6a00]/5' : 'border-gray-200 hover:border-[#ff6a00]/30'}`}>
+                                    <label className="flex items-center gap-3 p-4 border rounded-lg cursor-not-allowed bg-gray-50 border-gray-200 opacity-60 relative overflow-hidden">
                                         <input
                                             type="radio"
                                             name="payment"
                                             value="cbe"
-                                            checked={formData.payment === 'cbe'}
-                                            onChange={e => setFormData({ ...formData, payment: e.target.value })}
-                                            className="text-[#ff6a00] focus:ring-[#ff6a00]"
+                                            disabled
+                                            className="text-gray-400 focus:ring-0"
                                         />
                                         <div className="flex flex-col">
-                                            <span className="font-bold text-gray-900">CBE (Commercial Bank)</span>
-                                            <span className="text-xs text-gray-500">Bank Transfer</span>
+                                            <span className="font-bold text-gray-500">CBE (Commercial Bank)</span>
+                                            <span className="text-xs text-gray-400">Bank Transfer</span>
                                         </div>
+                                        <span className="absolute top-2 right-2 bg-gray-200 text-gray-600 text-[10px] uppercase font-bold px-2 py-0.5 rounded">Coming Soon</span>
                                     </label>
                                 </div>
                             </div>
