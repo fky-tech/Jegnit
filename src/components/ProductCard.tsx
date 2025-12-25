@@ -1,6 +1,6 @@
 'use client';
-import { useState } from 'react';
-import { ShoppingBag, X, Maximize2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ShoppingBag, X, Maximize2, Star } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
 
@@ -18,6 +18,7 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
     const { addToCart } = useCart();
     const [showImageModal, setShowImageModal] = useState(false);
+    const [rating, setRating] = useState({ averageRating: 0, reviewCount: 0 });
 
     // Parse sizes safely
     let sizeOptions: { size: string, price: string }[] = [];
@@ -31,9 +32,33 @@ export default function ProductCard({ product }: ProductCardProps) {
         sizeOptions = [];
     }
 
+    // Fetch product rating
+    useEffect(() => {
+        fetch(`/api/products/${product.id}/rating`)
+            .then(res => res.json())
+            .then(data => setRating(data))
+            .catch(err => console.error('Error fetching rating:', err));
+    }, [product.id]);
+
+    // Parse colors safely
+    let colorOptions: { name: string, img: string }[] = [];
+    try {
+        if (typeof (product as any).colors === 'string') {
+            colorOptions = JSON.parse((product as any).colors);
+        } else if (Array.isArray((product as any).colors)) {
+            colorOptions = (product as any).colors;
+        }
+    } catch {
+        colorOptions = [];
+    }
+
     const [selectedSize, setSelectedSize] = useState<string>(sizeOptions[0]?.size || '');
+    const [selectedColor, setSelectedColor] = useState<string>(colorOptions[0]?.name || '');
     const [currentPrice, setCurrentPrice] = useState<number>(
         sizeOptions[0]?.price ? Number(sizeOptions[0].price) : Number(product.price)
+    );
+    const [currentImage, setCurrentImage] = useState<string>(
+        colorOptions[0]?.img || product.img
     );
 
     const handleSizeSelect = (sizeObj: { size: string, price: string }) => {
@@ -41,13 +66,19 @@ export default function ProductCard({ product }: ProductCardProps) {
         setCurrentPrice(Number(sizeObj.price));
     };
 
+    const handleColorSelect = (colorObj: { name: string, img: string }) => {
+        setSelectedColor(colorObj.name);
+        if (colorObj.img) {
+            setCurrentImage(colorObj.img);
+        }
+    };
+
     const handleAdd = () => {
         if (!selectedSize && sizeOptions.length > 0) {
             alert('Please select a size');
             return;
         }
-        // Use selected price or base price
-        addToCart(product, selectedSize, currentPrice);
+        addToCart(product, selectedSize, currentPrice, selectedColor, currentImage);
     };
 
     return (
@@ -66,7 +97,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     </button>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                        src={product.img || '/placeholder.png'}
+                        src={currentImage || '/placeholder.png'}
                         alt={product.name}
                         className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl animate-fade-in-up"
                         onClick={(e) => e.stopPropagation()}
@@ -87,7 +118,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     )}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                        src={product.img || '/placeholder.png'}
+                        src={currentImage || '/placeholder.png'}
                         alt={product.name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
@@ -100,7 +131,70 @@ export default function ProductCard({ product }: ProductCardProps) {
 
                 <div className="p-4 flex flex-col flex-1">
                     <h3 className="font-bold text-lg mb-1 truncate">{product.name}</h3>
+
+                    {/* Rating Display */}
+                    {rating.reviewCount > 0 && (
+                        <div className="flex items-center gap-2 mb-2">
+                            <div className="flex items-center gap-0.5">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                        key={star}
+                                        className={`w-3.5 h-3.5 ${star <= Math.round(rating.averageRating)
+                                                ? 'text-yellow-400 fill-yellow-400'
+                                                : 'text-gray-300'
+                                            }`}
+                                    />
+                                ))}
+                            </div>
+                            <span className="text-xs text-gray-600 font-medium">
+                                {rating.averageRating.toFixed(1)} ({rating.reviewCount})
+                            </span>
+                        </div>
+                    )}
+
                     <p className="text-[#ff6a00] font-bold text-xl mb-3">ETB {currentPrice.toFixed(2)}</p>
+
+                    {/* Color Selector */}
+                    {colorOptions.length > 0 && (
+                        <div className="mb-4">
+                            <div className="flex justify-between items-end mb-2">
+                                <p className="text-xs text-gray-500 font-semibold uppercase">Color</p>
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{selectedColor}</span>
+                            </div>
+                            <div className="flex flex-wrap gap-3">
+                                {colorOptions.map((opt, idx) => {
+                                    const colorMap: Record<string, string> = {
+                                        'Red': '#db2727',
+                                        'Green': '#059669',
+                                        'Pink': '#db2777',
+                                        'Yellow': '#eab308',
+                                        'Black': '#000000',
+                                        'White': '#ffffff',
+                                        'Blue': '#2563eb',
+                                        'Beige': '#d1d5db',
+                                    };
+                                    const bgColor = colorMap[opt.name] || '#94a3b8';
+
+                                    return (
+                                        <button
+                                            key={idx}
+                                            onClick={() => handleColorSelect(opt)}
+                                            className={`w-8 h-8 rounded-full border-2 transition-all p-0.5 ${selectedColor === opt.name
+                                                ? 'border-[#ff6a00] scale-110 shadow-lg'
+                                                : 'border-transparent hover:scale-105'
+                                                }`}
+                                            title={opt.name}
+                                        >
+                                            <div
+                                                className="w-full h-full rounded-full border border-black/5"
+                                                style={{ backgroundColor: bgColor }}
+                                            />
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Size Selector */}
                     {sizeOptions.length > 0 && (

@@ -2,32 +2,137 @@
 import { useCart } from '@/context/CartContext';
 import { useState } from 'react';
 import { supabase } from '@/utils/supabase';
-import { Loader, CheckCircle } from 'lucide-react';
+import { Loader, CheckCircle, Star, ShoppingBag, Check } from 'lucide-react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+const MapSelector = dynamic(() => import('@/components/MapSelector'), { ssr: false });
+
+
+function ReviewItem({ item, customerName }: { item: any, customerName: string }) {
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState('');
+    const [reviewed, setReviewed] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+
+    const handleSubmit = async () => {
+        if (rating === 0) return;
+        setSubmitting(true);
+        try {
+            const response = await fetch('/api/reviews', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    product_id: item.product_id,
+                    customer_name: customerName,
+                    rating,
+                    comment
+                })
+            });
+            if (response.ok) {
+                setReviewed(true);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    if (reviewed) {
+        return (
+            <div className="mb-4 p-4 bg-green-50 border border-green-100 rounded-2xl animate-in zoom-in-95">
+                <div className="flex items-center gap-2 text-green-700 font-bold text-sm">
+                    <CheckCircle className="w-5 h-5" />
+                    <span>Review submitted for {item.name}!</span>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="mb-6 p-4 bg-white border border-gray-100 rounded-2xl shadow-sm">
+            <h4 className="font-bold text-gray-900 mb-1">{item.name}</h4>
+            <p className="text-xs text-gray-500 mb-3">{item.size} {item.color ? `• ${item.color}` : ''}</p>
+
+            <div className="flex items-center gap-1 mb-3">
+                {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                        key={star}
+                        onClick={() => setRating(star)}
+                        className={`transition-all hover:scale-110 ${rating >= star ? 'text-yellow-400' : 'text-gray-200'}`}
+                    >
+                        <Star className={`w-6 h-6 ${rating >= star ? 'fill-current' : 'stroke-2'}`} />
+                    </button>
+                ))}
+            </div>
+
+            <textarea
+                placeholder="Write a review..."
+                className="w-full p-3 border border-gray-200 rounded-xl text-xs focus:ring-1 focus:ring-[#ff6a00] outline-none mb-3 bg-gray-50 resize-none h-20"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+            />
+
+            <button
+                onClick={handleSubmit}
+                disabled={submitting || rating === 0}
+                className={`w-full py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-white transition-all ${rating > 0 && !submitting
+                        ? 'bg-black hover:bg-[#ff6a00]'
+                        : 'bg-gray-300 cursor-not-allowed'
+                    }`}
+            >
+                {submitting ? 'Submitting...' : 'Submit Review'}
+            </button>
+        </div>
+    );
+}
 
 export default function CheckoutPage() {
     const { items, cartTotal, clearCart } = useCart();
     const [submitting, setSubmitting] = useState(false);
     const [orderComplete, setOrderComplete] = useState(false);
     const [bookingId, setBookingId] = useState('');
+    const [purchasedItems, setPurchasedItems] = useState<any[]>([]);
 
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
         address: '',
-        payment: 'cod'
+        payment: 'cod',
+        latitude: null as number | null,
+        longitude: null as number | null
     });
+
+    const handleLocationSelect = (lat: number, lng: number, address: string) => {
+        setFormData(prev => ({
+            ...prev,
+            latitude: lat,
+            longitude: lng,
+            address: address
+        }));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitting(true);
 
         try {
+            // Check items exist
+            if (!items || items.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+
+            // Store items for review before clearing
+            setPurchasedItems([...items]);
+
             // Prepare order data
             const orderData = {
                 customer_name: formData.name,
                 customer_phone: formData.phone,
                 customer_address: formData.address,
+                latitude: formData.latitude,
+                longitude: formData.longitude,
                 payment_method: formData.payment,
                 status: 'pending',
                 items: items,
@@ -60,17 +165,6 @@ export default function CheckoutPage() {
 
             setBookingId(data.id);
 
-            // Handle Payment Redirects
-            /* 
-            if (formData.payment === 'telebirr') {
-                window.location.href = 'https://web.telebirr.com.et/';
-                return;
-            } else if (formData.payment === 'cbe') {
-                window.location.href = 'https://combanketh.et/';
-                return;
-            }
-            */
-
             // Default (COD) - Show Success Message
             setOrderComplete(true);
 
@@ -84,19 +178,41 @@ export default function CheckoutPage() {
 
     if (orderComplete) {
         return (
-            <div className="min-h-screen pb-20 container text-center max-w-lg mx-auto" style={{ paddingTop: '200px' }}>
-                <div className="bg-white p-8 rounded-2xl shadow-xl border border-green-100">
-                    <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <CheckCircle className="w-10 h-10" />
+            <div className="pt-32 pb-20 flex items-center justify-center min-h-screen bg-gray-50 px-4">
+                <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl max-w-2xl w-full text-center border border-gray-100 animate-in zoom-in-95 duration-500">
+                    <div className="w-24 h-24 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl shadow-green-200 animate-bounce">
+                        <Check className="w-12 h-12 stroke-[3]" />
                     </div>
-                    <h1 className="text-3xl font-black mb-4 text-gray-900">Order Placed!</h1>
-                    <p className="text-gray-600 mb-8">
-                        Thank you for your purchase, {formData.name}.<br />
-                        Your Order ID is <span className="font-mono font-bold text-black">#{bookingId}</span>.
-                    </p>
-                    <Link href="/shop" className="block w-full py-4 bg-[#ff6a00] text-white font-bold rounded-xl hover:bg-[#ff8533] transition-colors">
-                        Continue Shopping
-                    </Link>
+                    <h1 className="text-4xl font-black mb-4 uppercase italic tracking-tighter">Order <span className="text-[#ff6a00]">Successful!</span></h1>
+                    <p className="text-gray-500 mb-8 font-medium">Thank you, <span className="font-bold text-gray-800">{formData.name}</span>.<br />Your order <span className="text-[#ff6a00] font-black">#{bookingId}</span> has been received.</p>
+
+                    <div className="bg-orange-50/50 p-6 rounded-3xl border border-orange-100 mb-8 text-left">
+                        <h3 className="text-sm font-black text-[#ff6a00] uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <ShoppingBag className="w-4 h-4" /> Order Info
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center text-sm font-bold text-gray-900">
+                                <span>Total Amount:</span>
+                                <span className="text-xl font-black text-[#ff6a00]">ETB {(cartTotal > 0 ? cartTotal + 5 : purchasedItems.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity), 0) + 5).toFixed(2)}</span>
+                            </div>
+                            <p className="text-[10px] text-gray-400 italic">Delivery is being processed to: {formData.address}</p>
+                        </div>
+                    </div>
+
+                    <div className="mb-8 p-6 bg-gray-50 border-2 border-dashed border-gray-200 rounded-3xl animate-in fade-in slide-in-from-bottom-4 delay-500 text-left">
+                        <h3 className="text-lg font-black text-gray-900 uppercase italic mb-1">Rate Your Items</h3>
+                        <p className="text-xs text-gray-400 mb-6 uppercase font-bold tracking-widest">How did you like your purchase?</p>
+
+                        {purchasedItems.map((item, index) => (
+                            <ReviewItem key={index} item={item} customerName={formData.name} />
+                        ))}
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                        <Link href="/" className="w-full py-4 bg-[#ff6a00] text-white rounded-2xl font-black uppercase tracking-widest hover:bg-[#ff8533] transition-all shadow-xl shadow-orange-900/20 active:scale-95 text-center">
+                            Return Home
+                        </Link>
+                    </div>
                 </div>
             </div>
         );
@@ -144,15 +260,25 @@ export default function CheckoutPage() {
                                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Delivery Address</label>
-                                <textarea
-                                    required
-                                    rows={3}
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-1 focus:ring-[#ff6a00] outline-none resize-none"
-                                    value={formData.address}
-                                    onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                />
+                            <div className="space-y-4">
+                                <label className="block text-sm font-medium text-gray-700">Delivery Location (Select on Map)</label>
+                                <MapSelector onLocationSelect={handleLocationSelect} />
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Detailed Address / Landmark</label>
+                                    <textarea
+                                        required
+                                        rows={3}
+                                        placeholder="Pick on map or type your address here..."
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-1 focus:ring-[#ff6a00] outline-none resize-none transition-all"
+                                        value={formData.address}
+                                        onChange={e => setFormData({ ...formData, address: e.target.value })}
+                                    />
+                                    {formData.latitude && (
+                                        <p className="text-[10px] text-green-600 font-bold mt-1 uppercase tracking-widest flex items-center gap-1">
+                                            <Check className="w-3 h-3" /> Location Pin Captured
+                                        </p>
+                                    )}
+                                </div>
                             </div>
 
                             <div>
@@ -170,35 +296,61 @@ export default function CheckoutPage() {
                                         <span className="font-bold text-gray-900">Cash on Delivery</span>
                                     </label>
 
-                                    <label className="flex items-center gap-3 p-4 border rounded-lg cursor-not-allowed bg-gray-50 border-gray-200 opacity-60 relative overflow-hidden">
-                                        <input
-                                            type="radio"
-                                            name="payment"
-                                            value="telebirr"
-                                            disabled
-                                            className="text-gray-400 focus:ring-0"
-                                        />
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-gray-500">Telebirr</span>
-                                            <span className="text-xs text-gray-400">Pay via App</span>
+                                    <label className={`flex flex-col gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${formData.payment === 'telebirr' ? 'border-[#ff6a00] bg-[#ff6a00]/5' : 'border-gray-200 hover:border-[#ff6a00]/30'}`}>
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="radio"
+                                                name="payment"
+                                                value="telebirr"
+                                                checked={formData.payment === 'telebirr'}
+                                                onChange={e => setFormData({ ...formData, payment: e.target.value })}
+                                                className="text-[#ff6a00] focus:ring-[#ff6a00]"
+                                            />
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-gray-900">Telebirr</span>
+                                                <span className="text-xs text-gray-500">Pay via App</span>
+                                            </div>
                                         </div>
-                                        <span className="absolute top-2 right-2 bg-gray-200 text-gray-600 text-[10px] uppercase font-bold px-2 py-0.5 rounded">Coming Soon</span>
+                                        {formData.payment === 'telebirr' && (
+                                            <div className="ml-7 p-3 bg-white border border-orange-100 rounded-lg animate-in zoom-in-95">
+                                                <p className="text-sm font-bold text-gray-700">Telebirr Account:</p>
+                                                <p className="text-lg font-black text-[#ff6a00]">0911 22 33 44</p>
+                                                <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">Jegnit Luxury Shapewear</p>
+                                            </div>
+                                        )}
                                     </label>
 
-                                    <label className="flex items-center gap-3 p-4 border rounded-lg cursor-not-allowed bg-gray-50 border-gray-200 opacity-60 relative overflow-hidden">
-                                        <input
-                                            type="radio"
-                                            name="payment"
-                                            value="cbe"
-                                            disabled
-                                            className="text-gray-400 focus:ring-0"
-                                        />
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-gray-500">CBE (Commercial Bank)</span>
-                                            <span className="text-xs text-gray-400">Bank Transfer</span>
+                                    <label className={`flex flex-col gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${formData.payment === 'cbe' ? 'border-[#ff6a00] bg-[#ff6a00]/5' : 'border-gray-200 hover:border-[#ff6a00]/30'}`}>
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="radio"
+                                                name="payment"
+                                                value="cbe"
+                                                checked={formData.payment === 'cbe'}
+                                                onChange={e => setFormData({ ...formData, payment: e.target.value })}
+                                                className="text-[#ff6a00] focus:ring-[#ff6a00]"
+                                            />
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-gray-900">CBE (Commercial Bank)</span>
+                                                <span className="text-xs text-gray-500">Bank Transfer</span>
+                                            </div>
                                         </div>
-                                        <span className="absolute top-2 right-2 bg-gray-200 text-gray-600 text-[10px] uppercase font-bold px-2 py-0.5 rounded">Coming Soon</span>
+                                        {formData.payment === 'cbe' && (
+                                            <div className="ml-7 p-3 bg-white border border-orange-100 rounded-lg animate-in zoom-in-95">
+                                                <p className="text-sm font-bold text-gray-700">CBE Account:</p>
+                                                <p className="text-lg font-black text-[#ff6a00]">1000 1234 5678 9</p>
+                                                <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">Jegnit Luxury - CBE Birr</p>
+                                            </div>
+                                        )}
                                     </label>
+
+                                    {(formData.payment === 'telebirr' || formData.payment === 'cbe') && (
+                                        <div className="p-4 bg-red-50 border border-red-100 rounded-xl animate-in slide-in-from-top-2">
+                                            <p className="text-sm text-red-600 font-bold text-center italic">
+                                                "Take a screenshot of your payment for confirmation. We will ship your order as soon as payment is received"
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </form>
@@ -216,7 +368,9 @@ export default function CheckoutPage() {
                                         </div>
                                         <div className="flex-1">
                                             <p className="font-bold line-clamp-1">{item.name}</p>
-                                            <p className="text-gray-500">{item.size} x {item.quantity}</p>
+                                            <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">
+                                                Size: {item.size} {item.color && item.color !== 'Standard' && `| Color: ${item.color}`} x {item.quantity}
+                                            </p>
                                         </div>
                                         <div className="font-bold">
                                             ${(item.price * item.quantity).toFixed(2)}

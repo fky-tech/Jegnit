@@ -48,8 +48,8 @@ export default function Footer() {
                         <ul className="space-y-4">
                             <li><a href="#" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Shipping Policy</a></li>
                             <li><a href="#" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Returns & Exchanges</a></li>
-                            <li><a href="#" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Size Guide</a></li>
-                            <li><a href="#" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Privacy Policy</a></li>
+                            <li><Link href="/size-guide" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Size Guide</Link></li>
+                            <li><Link href="/privacy-policy" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Privacy Policy</Link></li>
                         </ul>
                     </div>
 

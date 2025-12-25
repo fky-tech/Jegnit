@@ -1,8 +1,9 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, ShoppingBag, Package, Users, LogOut, MessageSquare, Menu, X } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Package, Users, LogOut, MessageSquare, Menu, X, Star } from 'lucide-react';
 import { useState } from 'react';
+import NotificationBell from '@/components/admin/NotificationBell';
 
 export default function AdminLayout({
     children,
@@ -22,6 +23,7 @@ export default function AdminLayout({
         { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
         { name: 'Products', href: '/admin/products', icon: ShoppingBag },
         { name: 'Orders', href: '/admin/orders', icon: Package },
+        { name: 'Reviews', href: '/admin/reviews', icon: Star },
         { name: 'Contacts', href: '/admin/contacts', icon: MessageSquare },
     ];
 
@@ -38,9 +40,12 @@ export default function AdminLayout({
                     <img src="https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png" alt="Logo" className="h-8 w-auto" />
                     <span className="font-bold uppercase tracking-widest text-[#ff6a00]">Jegnit</span>
                 </div>
-                <button onClick={() => setSidebarOpen(true)}>
-                    <Menu className="w-6 h-6" />
-                </button>
+                <div className="flex items-center gap-2">
+                    <NotificationBell />
+                    <button onClick={() => setSidebarOpen(true)}>
+                        <Menu className="w-6 h-6" />
+                    </button>
+                </div>
             </div>
 
             {/* Sidebar Overlay */}
@@ -100,12 +105,28 @@ export default function AdminLayout({
                 </div>
             </aside>
 
-            {/* Main Content */}
-            <main className="flex-1 overflow-y-auto pt-16 md:pt-0 bg-gray-100">
-                <div className="p-4 md:p-8 max-w-6xl mx-auto">
+            {/* Main Content Area */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+                {/* Desktop Header */}
+                <header className="hidden md:flex items-center justify-between bg-white border-b border-gray-200 px-6 py-4">
+                    <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+                    <div className="flex items-center gap-4">
+                        <NotificationBell />
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                        >
+                            <LogOut className="w-4 h-4" />
+                            <span className="font-medium">Logout</span>
+                        </button>
+                    </div>
+                </header>
+
+                {/* Page Content */}
+                <main className="flex-1 overflow-auto bg-gray-50 p-6 md:pt-0 pt-16">
                     {children}
-                </div>
-            </main>
+                </main>
+            </div>
         </div>
     );
 }

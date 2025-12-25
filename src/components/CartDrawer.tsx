@@ -49,11 +49,14 @@ export default function CartDrawer() {
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>
-                                        <div className="flex items-center justify-between mt-2">
-                                            <div>
-                                                <span className="text-xs font-bold uppercase text-gray-500 bg-gray-200 px-2 py-1 rounded mr-2">{item.size}</span>
-                                                <span className="text-[#ff6a00] font-bold">${item.price.toFixed(2)}</span>
-                                            </div>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="text-[10px] font-black uppercase text-gray-500 bg-gray-200 px-2 py-0.5 rounded tracking-widest">{item.size}</span>
+                                            {item.color && item.color !== 'Standard' && (
+                                                <span className="text-[10px] font-black uppercase text-white bg-[#ff6a00] px-2 py-0.5 rounded tracking-widest">{item.color}</span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[#ff6a00] font-black">ETB {item.price.toFixed(2)}</span>
                                             <div className="flex items-center gap-2 bg-white rounded-lg border border-gray-200 px-2 py-1">
                                                 <button onClick={() => updateQuantity(item.id, -1)} className="p-1 hover:text-[#ff6a00]">
                                                     <Minus className="w-3 h-3" />

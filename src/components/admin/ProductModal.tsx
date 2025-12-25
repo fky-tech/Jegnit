@@ -24,8 +24,9 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
         featured: false,
     });
 
-    // Manage sizes dynamically
+    // Manage sizes and colors dynamically
     const [sizes, setSizes] = useState<SizeVariant[]>([]);
+    const [colors, setColors] = useState<{ name: string, img: string }[]>([]);
 
     useEffect(() => {
         if (initialData) {
@@ -49,6 +50,19 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                 setSizes([]);
             }
 
+            // Parse colors if available
+            try {
+                if (typeof initialData.colors === 'string') {
+                    setColors(JSON.parse(initialData.colors));
+                } else if (Array.isArray(initialData.colors)) {
+                    setColors(initialData.colors);
+                } else {
+                    setColors([]);
+                }
+            } catch (e) {
+                setColors([]);
+            }
+
         } else {
             setFormData({
                 name: '',
@@ -57,18 +71,19 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                 featured: false,
             });
             setSizes([]);
+            setColors([]);
         }
     }, [initialData, isOpen]);
 
     const [uploading, setUploading] = useState(false);
     const BASE_IMAGE_URL = 'https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/';
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, colorIndex?: number) => {
         if (!e.target.files || e.target.files.length === 0) return;
 
         setUploading(true);
         const file = e.target.files[0];
-        const fileName = file.name; // User requested: use the uploaded filename
+        const fileName = `${Date.now()}-${file.name}`; // Avoid collisions
 
         try {
             // Upload to Supabase Storage
@@ -76,14 +91,20 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                 .storage
                 .from('product-images')
                 .upload(fileName, file, {
-                    upsert: true // Overwrite if exists, as implied by "last product8.jpg"
+                    upsert: true
                 });
 
             if (error) throw error;
 
-            // Construct URL per user request
             const publicUrl = `${BASE_IMAGE_URL}${fileName}`;
-            setFormData(prev => ({ ...prev, img: publicUrl }));
+
+            if (colorIndex !== undefined) {
+                const newColors = [...colors];
+                newColors[colorIndex].img = publicUrl;
+                setColors(newColors);
+            } else {
+                setFormData(prev => ({ ...prev, img: publicUrl }));
+            }
 
         } catch (error: any) {
             console.error('Upload Error:', error);
@@ -96,7 +117,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
     if (!isOpen) return null;
 
     const handleAddSize = () => {
-        setSizes([...sizes, { size: '', price: formData.price }]); // Default to base price
+        setSizes([...sizes, { size: '', price: formData.price }]);
     };
 
     const handleRemoveSize = (index: number) => {
@@ -109,18 +130,33 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
         setSizes(newSizes);
     };
 
+    const handleAddColor = () => {
+        setColors([...colors, { name: '', img: '' }]);
+    };
+
+    const handleRemoveColor = (index: number) => {
+        setColors(colors.filter((_, i) => i !== index));
+    };
+
+    const handleColorChange = (index: number, field: string, value: string) => {
+        const newColors = [...colors];
+        const color = newColors[index] as any;
+        color[field] = value;
+        setColors(newColors);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         try {
-            // Prepare submission data with correct types
             const submission = {
                 ...formData,
-                price: parseFloat(formData.price), // Convert to number
+                price: parseFloat(formData.price),
                 sizes: sizes.map(s => ({
                     ...s,
-                    price: parseFloat(s.price || formData.price) // Convert variant prices too
-                }))
+                    price: parseFloat(s.price || formData.price)
+                })),
+                colors: colors
             };
 
             await onSubmit(submission);
@@ -206,8 +242,55 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                             </div>
                         </div>
 
+                        {/* Dynamic Colors Section */}
+                        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="block text-sm font-bold text-gray-700">Color Variants</label>
+                                <button type="button" onClick={handleAddColor} className="text-xs flex items-center gap-1 bg-black text-white px-2 py-1 rounded hover:bg-[#ff6a00] transition-colors">
+                                    <Plus className="w-3 h-3" /> Add Color
+                                </button>
+                            </div>
+
+                            <div className="space-y-3">
+                                {colors.length === 0 && <p className="text-xs text-gray-400 italic">No specific colors added.</p>}
+                                {colors.map((c, idx) => (
+                                    <div key={idx} className="p-3 bg-white rounded-lg border border-gray-200">
+                                        <div className="flex gap-2 items-center mb-2">
+                                            <input
+                                                type="text"
+                                                placeholder="Color Name (e.g. Black, Nude)"
+                                                className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#ff6a00]"
+                                                value={c.name}
+                                                onChange={(e) => handleColorChange(idx, 'name', e.target.value)}
+                                                required
+                                            />
+                                            <button type="button" onClick={() => handleRemoveColor(idx)} className="text-red-500 hover:text-red-700 p-1">
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                        <div className="flex gap-2 items-center">
+                                            <input
+                                                type="url"
+                                                placeholder="Image URL"
+                                                className="flex-1 px-3 py-1.5 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-[#ff6a00]"
+                                                value={c.img}
+                                                onChange={(e) => handleColorChange(idx, 'img', e.target.value)}
+                                            />
+                                            <label className="p-1 px-2 bg-gray-100 border border-gray-300 rounded text-[10px] cursor-pointer hover:bg-gray-200">
+                                                Upload
+                                                <input type="file" className="hidden" onChange={(e) => handleImageUpload(e, idx)} />
+                                            </label>
+                                        </div>
+                                        {c.img && (
+                                            <img src={c.img} className="mt-2 w-full h-20 object-contain bg-gray-50 rounded" alt="Color variant" />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Main Product Image (Default)</label>
 
                             {/* File Upload */}
                             <div className="mb-3">

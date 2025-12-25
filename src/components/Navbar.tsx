@@ -3,11 +3,13 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { ShoppingBag, Menu, X } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { toggleDrawer, cartCount } = useCart();
+    const pathname = usePathname();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -16,6 +18,14 @@ export default function Navbar() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    const navLinks = [
+        { name: 'Home', href: '/' },
+        { name: 'Shop', href: '/shop' },
+        { name: 'About', href: '/about' },
+        { name: 'Checkout', href: '/checkout' },
+        { name: 'Contact', href: '/contact' },
+    ];
 
     return (
         <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-[#ff6a00]/95 backdrop-blur-md shadow-md py-4' : 'bg-gradient-to-r from-[#ff6a00] to-[#ff914d] py-3'}`}>
@@ -28,11 +38,18 @@ export default function Navbar() {
 
                 {/* Desktop Menu */}
                 <div className="hidden md:flex items-center gap-8 font-medium text-white">
-                    <Link href="/" className="hover:text-white/80 transition-colors">Home</Link>
-                    <Link href="/shop" className="hover:text-white/80 transition-colors">Shop</Link>
-                    <Link href="/about" className="hover:text-white/80 transition-colors">About</Link>
-                    <Link href="/checkout" className="hover:text-white/80 transition-colors">Checkout</Link>
-                    <Link href="/contact" className="hover:text-white/80 transition-colors">Contact</Link>
+                    {navLinks.map((link) => (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className={`transition-all duration-300 relative py-1 hover:text-white/80 ${pathname === link.href ? 'text-white' : 'text-white/70'}`}
+                        >
+                            {link.name}
+                            {pathname === link.href && (
+                                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white animate-in slide-in-from-left duration-500"></span>
+                            )}
+                        </Link>
+                    ))}
                 </div>
 
                 <div className="flex items-center gap-4 text-white">
@@ -51,11 +68,16 @@ export default function Navbar() {
             {/* Mobile Menu */}
             {mobileMenuOpen && (
                 <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4 px-6 flex flex-col items-center gap-4 text-gray-800 text-center">
-                    <Link href="/" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-                    <Link href="/shop" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Shop</Link>
-                    <Link href="/about" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>About</Link>
-                    <Link href="/checkout" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Checkout</Link>
-                    <Link href="/contact" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
+                    {navLinks.map((link) => (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className={`text-lg font-medium w-full py-2 ${pathname === link.href ? 'text-[#ff6a00] bg-orange-50 rounded-lg' : 'text-gray-800'}`}
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            {link.name}
+                        </Link>
+                    ))}
                 </div>
             )}
         </nav>
