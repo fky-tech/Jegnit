@@ -213,7 +213,7 @@ export default function CheckoutPage() {
                         <div className="space-y-3">
                             <div className="flex justify-between items-center text-sm font-bold text-gray-900">
                                 <span>Total Amount:</span>
-                                <span className="text-xl font-black text-[#ff6a00]">ETB {(cartTotal > 0 ? cartTotal + 5 : purchasedItems.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity), 0) + 5).toFixed(2)}</span>
+                                <span className="text-xl font-black text-[#ff6a00]">ETB {(cartTotal > 0 ? cartTotal + deliveryFee : purchasedItems.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity), 0) + deliveryFee).toFixed(2)}</span>
                             </div>
                             <p className="text-[10px] text-gray-400 italic">Delivery is being processed to: {formData.address}</p>
                         </div>

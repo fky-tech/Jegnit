@@ -352,21 +352,23 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
                     </div >
 
                     {/* Summary */}
-                    < div className="bg-gray-50 p-6 rounded-2xl space-y-3 text-black" >
+                    <div className="bg-gray-50 p-6 rounded-2xl space-y-3 text-black">
                         <div className="flex justify-between text-sm text-gray-600">
                             <span>Subtotal</span>
-                            <span>ETB {(order.fees?.subtotal || (order.total - (order.fees?.shipping || 5))).toFixed(2)}</span>
+                            <span>ETB {(order.fees?.subtotal ?? (order.total - (order.fees?.shipping ?? 0))).toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between text-sm text-gray-600">
-                            <span>Delivery Fee</span>
-                            <span>ETB {(order.fees?.shipping || 5).toFixed(2)}</span>
-                        </div>
+                        {order.fees?.shipping > 0 && (
+                            <div className="flex justify-between text-sm text-gray-600">
+                                <span>Delivery Fee</span>
+                                <span>ETB {order.fees.shipping.toFixed(2)}</span>
+                            </div>
+                        )}
                         <div className="flex justify-between text-lg font-black text-gray-900 border-t border-gray-200 pt-3 mt-3">
                             <span className="flex items-center gap-2 uppercase tracking-widest"><DollarSign className="w-5 h-5 text-[#ff6a00]" /> Total</span>
                             <span className="text-[#ff6a00]">ETB {(order.total || order.fees?.total).toLocaleString()}</span>
                         </div>
-                    </div >
-                </div >
+                    </div>
+                </div>
 
                 {/* Modal Footer */}
                 < div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-end" >
