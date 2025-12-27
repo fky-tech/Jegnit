@@ -1,122 +1,143 @@
 'use client';
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Ruler, Info, CheckCircle2, HelpCircle } from 'lucide-react';
 
 export default function SizeGuide() {
     return (
-        <div className="pt-32 pb-20 bg-white">
+        <div className="pt-16 pb-20 bg-white min-h-screen text-gray-800 font-sans">
+            {/* Hero Header */}
+            <div className="relative bg-black text-white py-20 overflow-hidden mb-16">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/50 via-orange-600/30 to-black/90 z-10"></div>
+                {/* <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-10"></div> */}
+                <div className="container max-w-5xl mx-auto px-6 relative z-20 text-center">
+                    <h1 className="text-5xl md:text-6xl font-black tracking-tighter uppercase mb-4">
+                        Find Your <span>Perfect Fit</span>
+                    </h1>
+                    <p className="text-xl text-gray-400 max-w-2xl mx-auto mt-2">
+                        Measurement guide to ensure you feel confident and comfortable in your Jegnit shapewear.
+                    </p>
+                </div>
+            </div>
+
             <div className="container max-w-4xl mx-auto px-6">
-                <Link href="/" className="inline-flex items-center text-gray-500 hover:text-[#ff6a00] mb-8 transition-colors group">
-                    <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                    Back to Home
+                <Link href="/shop" className="inline-flex items-center text-sm font-bold text-gray-400 hover:text-[#ff6a00] mb-12 transition-colors group tracking-widest uppercase">
+                    <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
+                    Back to Shop
                 </Link>
 
-                <h1 className="text-4xl font-black mb-8 tracking-tighter uppercase italic">
-                    Jegnit <span className="text-[#ff6a00]">Size Guide</span>
-                </h1>
-
-                <div className="prose prose-lg max-w-none text-gray-700 space-y-8">
-                    <section>
-                        <p className="leading-relaxed">
-                            To ensure the best fit, measure your body using a soft measuring tape. Measurements should be taken directly on the body, not over clothing.
-                        </p>
-                    </section>
-
-                    <section className="bg-gray-50 p-8 rounded-2xl border border-gray-100">
-                        <h2 className="text-2xl font-bold mb-4 text-gray-900 border-l-4 border-[#ff6a00] pl-4">How to Measure</h2>
-                        <ul className="space-y-3 list-none pl-0">
-                            <li className="flex gap-2">
-                                <span className="font-bold text-[#ff6a00]">•</span>
-                                <div><strong>Bust:</strong> Measure around the fullest part of your chest.</div>
-                            </li>
-                            <li className="flex gap-2">
-                                <span className="font-bold text-[#ff6a00]">•</span>
-                                <div><strong>Waist:</strong> Measure around the narrowest part of your waist.</div>
-                            </li>
-                            <li className="flex gap-2">
-                                <span className="font-bold text-[#ff6a00]">•</span>
-                                <div><strong>Hips:</strong> Measure around the fullest part of your hips.</div>
-                            </li>
-                        </ul>
-                    </section>
-
-                    <div className="my-12 relative h-[400px] w-full bg-gray-100 rounded-3xl overflow-hidden flex items-center justify-center border-2 border-gray-100">
-                        {/* Placeholder for size chart image per user request */}
-                        <div className="text-center p-12">
-                            <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&q=80&w=1000" alt="Size Chart Reference" className="absolute inset-0 w-full h-full object-cover opacity-20" />
-                            <div className="relative z-10">
-                                <p className="text-gray-400 font-bold text-xl uppercase tracking-widest">Size Chart Reference Image</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20 items-center">
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-3 bg-orange-50 rounded-xl text-[#ff6a00]">
+                                <Ruler className="w-8 h-8" />
                             </div>
+                            <h2 className="text-3xl font-bold text-gray-900">How to Measure</h2>
                         </div>
-                    </div>
-
-                    <section>
-                        <h2 className="text-2xl font-bold mb-6 text-gray-900">Woman’s Shapewear Size Chart</h2>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse border border-gray-200 rounded-xl overflow-hidden">
-                                <thead className="bg-[#ff6a00] text-white">
-                                    <tr>
-                                        <th className="p-4 border border-white/20">Size</th>
-                                        <th className="p-4 border border-white/20">Bust (in)</th>
-                                        <th className="p-4 border border-white/20">Waist (in)</th>
-                                        <th className="p-4 border border-white/20">Hips (in)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {[
-                                        { s: 'S', b: '32-34', w: '24-26', h: '34-36' },
-                                        { s: 'M', b: '34-36', w: '26-28', h: '36-38' },
-                                        { s: 'L', b: '36-38', w: '28-30', h: '38-40' },
-                                        { s: 'XL', b: '38-40', w: '30-32', h: '40-42' },
-                                        { s: 'XXL', b: '40-42', w: '32-34', h: '42-44' },
-                                    ].map((row, i) => (
-                                        <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                                            <td className="p-4 border border-gray-200 font-bold">{row.s}</td>
-                                            <td className="p-4 border border-gray-200">{row.b}</td>
-                                            <td className="p-4 border border-gray-200">{row.w}</td>
-                                            <td className="p-4 border border-gray-200">{row.h}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </section>
-
-                    <section className="bg-orange-50 p-8 rounded-2xl border border-orange-100">
-                        <h2 className="text-2xl font-bold mb-4 text-gray-900 border-l-4 border-[#ff6a00] pl-4 italic uppercase">Fit Tips (Important)</h2>
-                        <ul className="space-y-3 list-none pl-0">
+                        <p className="text-lg text-gray-600 leading-relaxed">
+                            For the most accurate results, use a soft measuring tape. Measure directly on your skin, keeping the tape snug but not tight.
+                        </p>
+                        <ul className="space-y-2">
                             {[
-                                "If you’re between sizes, choose the larger size for comfort.",
-                                "Jegnit shapewear is designed to shape, not restrict.",
-                                "Do not size down for extra compression — it may reduce comfort and durability."
-                            ].map((tip, idx) => (
-                                <li key={idx} className="flex gap-2">
-                                    <span className="font-bold text-[#ff6a00]">•</span>
-                                    <span>{tip}</span>
+                                { title: "Bust", desc: "Measure around the fullest part of your chest." },
+                                { title: "Waist", desc: "Measure around the narrowest part of your waist (natural waistline)." },
+                                { title: "Hips", desc: "Measure around the fullest part of your hips." }
+                            ].map((item, i) => (
+                                <li key={i} className="flex gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+                                    <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
+                                        {i + 1}
+                                    </div>
+                                    <div>
+                                        <strong className="block text-gray-900 text-lg">{item.title}</strong>
+                                        <span className="text-gray-500">{item.desc}</span>
+                                    </div>
                                 </li>
                             ))}
                         </ul>
-                    </section>
+                    </div>
 
-                    <section className="space-y-4">
-                        <h2 className="text-2xl font-bold text-gray-900">Product-Specific Fit Notes</h2>
-                        <p>Some styles may fit differently depending on design and compression level. Always check the product description for specific fit details.</p>
-                    </section>
-
-                    <section className="space-y-4 border-t pt-8 border-gray-100">
-                        <h2 className="text-2xl font-bold text-gray-900 italic uppercase">Care & Comfort Note</h2>
-                        <p>Our fabrics are stretchable and breathable, allowing flexibility while maintaining support throughout the day.</p>
-                    </section>
+                    {/* Visual Placeholder */}
+                    <div className="relative h-[500px] bg-gray-100 rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white ring-1 ring-gray-100">
+                        <img
+                            src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1000"
+                            alt="Measurement visual"
+                            className="absolute inset-0 w-full h-full object-cover opacity-80"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
+                            <p className="text-white font-medium text-sm border-l-2 border-[#ff6a00] pl-3">
+                                Stand straight and relax while measuring.
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="mt-16 bg-black text-white p-12 rounded-3xl text-center">
-                    <h2 className="text-3xl font-black mb-4 uppercase">Need Help Choosing a Size?</h2>
-                    <p className="text-gray-400 mb-8 max-w-xl mx-auto">
-                        If you’re unsure, contact our support team and we’ll help you find your perfect fit.
-                    </p>
-                    <Link href="/contact" className="inline-block px-10 py-4 bg-[#ff6a00] text-white font-bold rounded-xl hover:bg-[#ff8533] transition-all transform hover:scale-105 shadow-xl shadow-orange-900/20">
-                        Contact Support
-                    </Link>
+                {/* Size Chart Section */}
+                <section className="mb-20 pt-10">
+                    <div className="text-center mb-10">
+                        <span className="text-[#ff6a00] font-black tracking-widest uppercase text-xs mb-2 block">Reference Table</span>
+                        <h2 className="text-4xl font-bold text-gray-900">Shapewear Size Chart</h2>
+                    </div>
+
+                    <div className="overflow-hidden rounded-2xl shadow-xl border border-gray-100 bg-white overflow-x-auto">
+                        <table className="w-full text-left border-collapse min-w-[500px]">
+                            <thead>
+                                <tr className="bg-gray-900 text-white">
+                                    <th className="p-6 text-sm font-bold uppercase tracking-wider">Size</th>
+                                    <th className="p-6 text-sm font-bold uppercase tracking-wider">Bust (cm)</th>
+                                    <th className="p-6 text-sm font-bold uppercase tracking-wider">Waist (cm)</th>
+                                    <th className="p-6 text-sm font-bold uppercase tracking-wider">Hips (cm)</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {[
+                                    { s: 'XS', b: '78-82', w: '58-62', h: '84-88' },
+                                    { s: 'S', b: '83-87', w: '63-67', h: '89-93' },
+                                    { s: 'M', b: '88-92', w: '68-72', h: '94-98' },
+                                    { s: 'L', b: '93-97', w: '73-77', h: '99-103' },
+                                    { s: 'XL', b: '98-102', w: '78-82', h: '104-108' },
+                                    { s: 'XXL', b: '103-107', w: '83-87', h: '109-113' },
+                                ].map((row, i) => (
+                                    <tr key={i} className="hover:bg-orange-50/30 transition-colors group">
+                                        <td className="p-6 font-black text-gray-900 group-hover:text-[#ff6a00] transition-colors text-lg">{row.s}</td>
+                                        <td className="p-6 text-gray-600 font-medium">{row.b}</td>
+                                        <td className="p-6 text-gray-600 font-medium">{row.w}</td>
+                                        <td className="p-6 text-gray-600 font-medium">{row.h}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                {/* Fit Tips */}
+                <div className="grid md:grid-cols-2 gap-8 mb-20">
+                    <div className="bg-[#ff6a00] text-white p-10 rounded-[2rem] shadow-lg shadow-orange-200">
+                        <h3 className="text-2xl font-black uppercase mb-6 flex items-center justify-center gap-3">
+                            <Info className="w-6 h-6" /> Pro Fit Tips
+                        </h3>
+                        <ul className="space-y-4 mt-3">
+                            <li className="flex items-start gap-3">
+                                <CheckCircle2 className="w-5 h-5 mt-1 flex-shrink-0 text-white/70" />
+                                <span className="font-medium text-white/90">If you are in between sizes, primarily use your waist measurement.</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                                <CheckCircle2 className="w-5 h-5 mt-1 flex-shrink-0 text-white/70" />
+                                <span className="font-medium text-white/90">For a more comfortable fit, size up. For improved sculpting, stick to true size.</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                                <CheckCircle2 className="w-5 h-5 mt-1 flex-shrink-0 text-white/70" />
+                                <span className="font-medium text-white/90">Shapewear should feel firm but not painful or restrictive to breathing.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div className="bg-gray-50 border border-gray-100 p-10 rounded-[2rem] flex flex-col justify-center items-center text-center">
+                        <HelpCircle className="w-12 h-12 text-gray-400 mb-4" />
+                        <h3 className="text-2xl font-bold text-gray-900 mb-3">Still Unsure?</h3>
+                        <p className="text-gray-500 mb-8">Our fit experts are available 24/7 to guide you to the perfect size.</p>
+                        <Link href="/contact" className="px-8 py-3 bg-black !text-white font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl active:scale-95">
+                            Chat with Expert
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>

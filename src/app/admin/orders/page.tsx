@@ -11,8 +11,8 @@ export default async function AdminOrders() {
         .order('created_at', { ascending: false });
 
     return (
-        <div>
-            <h1 className="text-3xl font-bold mb-8 text-gray-800 pb-7">Orders</h1>
+        <div className="mt-20 md:mt-5 ml-2">
+            <h1 className="text-2xl font-black text-gray-900 uppercase italic tracking-tighter mb-8 pb-7">Orders</h1>
             <OrderTable initialOrders={orders || []} />
         </div>
     );

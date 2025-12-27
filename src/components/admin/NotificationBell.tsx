@@ -1,7 +1,7 @@
 import { Bell } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-export default function NotificationBell() {
+export default function NotificationBell({ mode = 'light' }: { mode?: 'light' | 'dark' }) {
     const [unreadCount, setUnreadCount] = useState(0);
     const [showDropdown, setShowDropdown] = useState(false);
     const [notifications, setNotifications] = useState<any[]>([]);
@@ -50,9 +50,9 @@ export default function NotificationBell() {
         <div className="relative">
             <button
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                className={`relative p-2 rounded-lg transition-colors ${mode === 'dark' ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
             >
-                <Bell className="w-5 h-5 text-gray-600" />
+                <Bell className={`w-5 h-5 ${mode === 'dark' ? 'text-white' : 'text-gray-600'}`} />
                 {unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-[#ff6a00] text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
                         {unreadCount > 9 ? '9+' : unreadCount}
@@ -77,7 +77,11 @@ export default function NotificationBell() {
                                 {notifications.map((notif) => (
                                     <div
                                         key={notif.id}
-                                        className="p-4 hover:bg-gray-50 transition-colors group relative"
+                                        onClick={() => {
+                                            setShowDropdown(false);
+                                            window.location.href = '/admin/orders';
+                                        }}
+                                        className="p-4 hover:bg-gray-50 transition-colors group relative cursor-pointer"
                                     >
                                         <p className="text-sm font-medium text-gray-900">{notif.title}</p>
                                         <p className="text-xs text-gray-600 mt-1">{notif.message}</p>

@@ -49,7 +49,7 @@ export async function GET(request: Request) {
     const productId = searchParams.get('productId');
 
     const supabaseAdmin = getSupabaseAdmin();
-    let query = supabaseAdmin.from('reviews').select('*').order('created_at', { ascending: false });
+    let query = supabaseAdmin.from('reviews').select('*, products(name)').order('created_at', { ascending: false });
 
     if (productId) {
         query = query.eq('product_id', productId);

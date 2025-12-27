@@ -71,7 +71,7 @@ export default function FAQ() {
                     ))}
                 </div>
 
-                <div className="mt-12 text-center">
+                {/* <div className="mt-12 text-center">
                     <p className="text-gray-600 mb-4">Still have questions?</p>
                     <a
                         href="/contact"
@@ -79,7 +79,7 @@ export default function FAQ() {
                     >
                         Contact Us
                     </a>
-                </div>
+                </div> */}
             </div>
         </section>
     );

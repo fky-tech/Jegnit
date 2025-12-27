@@ -12,7 +12,7 @@ export default function Footer() {
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src="https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png" alt="Logo" className="h-10 w-auto" />
                             <span className="text-3xl font-bold tracking-tighter uppercase">
-                                <span className="text-[#ff6a00]">JEG</span>NIT
+                                <span>JEG</span>NIT
                             </span>
                         </Link>
                         <p className="text-gray-400 leading-relaxed">
@@ -32,22 +32,22 @@ export default function Footer() {
                     </div>
 
                     {/* Quick Links */}
-                    <div>
-                        <h3 className="text-lg font-bold mb-6">Quick Links</h3>
+                    <div className='ml-0 lg:ml-12'>
+                        <h3 className="text-lg font-bold mb-6 pb-3">Quick Links</h3>
                         <ul className="space-y-4">
                             <li><Link href="/" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Home</Link></li>
+                            <li><Link href="/about" className="text-gray-400 hover:text-[#ff6a00] transition-colors">About</Link></li>
                             <li><Link href="/shop" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Collection</Link></li>
                             <li><Link href="/checkout" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Checkout</Link></li>
-                            <li><Link href="/contact" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Contact Us</Link></li>
                         </ul>
                     </div>
 
                     {/* Customer Service */}
                     <div>
-                        <h3 className="text-lg font-bold mb-6">Customer Care</h3>
+                        <h3 className="text-lg font-bold mb-6 pb-3">Customer Care</h3>
                         <ul className="space-y-4">
-                            <li><a href="#" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Shipping Policy</a></li>
-                            <li><a href="#" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Returns & Exchanges</a></li>
+                            <li><Link href="/write-review" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Write a Review</Link></li>
+                            <li><Link href="/contact" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Contact Us</Link></li>
                             <li><Link href="/size-guide" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Size Guide</Link></li>
                             <li><Link href="/privacy-policy" className="text-gray-400 hover:text-[#ff6a00] transition-colors">Privacy Policy</Link></li>
                         </ul>
@@ -55,7 +55,7 @@ export default function Footer() {
 
                     {/* Contact Info */}
                     <div>
-                        <h3 className="text-lg font-bold mb-6">Get in Touch</h3>
+                        <h3 className="text-lg font-bold mb-6 pb-3">Get in Touch</h3>
                         <ul className="space-y-6">
                             <li className="flex items-start gap-4 justify-center md:justify-start">
                                 <MapPin className="w-5 h-5 text-[#ff6a00] flex-shrink-0 mt-1" />

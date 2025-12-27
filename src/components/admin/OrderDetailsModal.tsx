@@ -158,7 +158,7 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
         };
 
         initMap();
-    }, [isGoogleLoaded, showMap, order.latitude, order.longitude]);
+    }, [isGoogleLoaded, showMap, order.latitude, order.longitude, mapFullscreen]);
 
     if (!order) return null;
 
@@ -236,16 +236,16 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
                                 {showMap && hasCoords && (
                                     <>
                                         {mapFullscreen ? createPortal(
-                                            <div className="fixed inset-0 z-[99999] bg-white">
-                                                <div className="h-full w-full relative">
+                                            <div className="fixed inset-0 z-[99999] bg-white w-screen h-screen flex flex-col">
+                                                <div className="relative w-full h-full flex-1">
                                                     {isGoogleLoaded && !googleError ? (
-                                                        <div ref={googleMapRef} className="w-full h-full" />
+                                                        <div ref={googleMapRef} className="w-full h-full" style={{ minHeight: '100vh' }} />
                                                     ) : (
                                                         <MapContainer
                                                             center={[order.latitude, order.longitude]}
                                                             zoom={15}
                                                             scrollWheelZoom={true}
-                                                            style={{ height: '100%', width: '100%' }}
+                                                            style={{ height: '100vh', width: '100vw' }}
                                                         >
                                                             <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
                                                             <Marker position={[order.latitude, order.longitude]} icon={icon!} />
@@ -253,9 +253,9 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
                                                     )}
                                                     <button
                                                         onClick={() => setMapFullscreen(false)}
-                                                        className="absolute top-4 right-4 z-[1000] p-3 bg-white/95 rounded-xl shadow-2xl border border-gray-200 hover:bg-gray-50 transition-all"
+                                                        className="absolute top-4 right-4 z-[10000] p-3 bg-white/95 rounded-xl shadow-2xl border border-gray-200 hover:bg-gray-50 transition-all font-bold text-gray-700 flex items-center gap-2"
                                                     >
-                                                        <X className="w-5 h-5" />
+                                                        <X className="w-5 h-5" /> Close Fullscreen
                                                     </button>
                                                 </div>
                                             </div>,
@@ -311,10 +311,10 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div >
 
                     {/* Items List */}
-                    <div className="space-y-4 mb-8">
+                    < div className="space-y-4 mb-8" >
                         <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
                             <Package className="w-3 h-3" /> Order Items
                         </h4>
@@ -349,10 +349,10 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    </div >
 
                     {/* Summary */}
-                    <div className="bg-gray-50 p-6 rounded-2xl space-y-3 text-black">
+                    < div className="bg-gray-50 p-6 rounded-2xl space-y-3 text-black" >
                         <div className="flex justify-between text-sm text-gray-600">
                             <span>Subtotal</span>
                             <span>ETB {(order.fees?.subtotal || (order.total - (order.fees?.shipping || 5))).toFixed(2)}</span>
@@ -365,16 +365,16 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
                             <span className="flex items-center gap-2 uppercase tracking-widest"><DollarSign className="w-5 h-5 text-[#ff6a00]" /> Total</span>
                             <span className="text-[#ff6a00]">ETB {(order.total || order.fees?.total).toLocaleString()}</span>
                         </div>
-                    </div>
-                </div>
+                    </div >
+                </div >
 
                 {/* Modal Footer */}
-                <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-end">
+                < div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-end" >
                     <button onClick={onClose} className="px-6 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-100 transition-colors">
                         Close
                     </button>
-                </div>
-            </div>
-        </div>
+                </div >
+            </div >
+        </div >
     );
 }

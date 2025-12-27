@@ -81,69 +81,78 @@ export default function ProductList({ initialProducts }: ProductListProps) {
     };
 
     return (
-        <div>
-            <div className="flex justify-between items-center mb-8 pt-7">
-                <h1 className="text-3xl font-bold text-gray-800">Products</h1>
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 mt-20 md:mt-5 ml-2">
+            <div className="flex justify-between items-end mb-8">
+                <div>
+                    <h1 className="text-2xl font-black text-gray-900 uppercase italic tracking-tighter">Products</h1>
+                    <p className="text-gray-500 font-medium mt-1">Manage your catalog</p>
+                </div>
                 <button
                     onClick={openAddModal}
-                    className="flex items-center gap-2 bg-[#ff6a00] text-white px-4 py-2 rounded-lg font-bold hover:bg-[#ff914d] transition-colors shadow-lg shadow-orange-200"
+                    className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-xl font-bold uppercase tracking-widest hover:bg-[#ff6a00] hover:shadow-[0_10px_20px_rgba(255,106,0,0.3)] transition-all duration-300 shadow-lg active:scale-95"
                 >
-                    <Plus className="w-4 h-4" /> Add Product
+                    <Plus className="w-5 h-5" /> Add Product
                 </button>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left min-w-[600px]">
-                        <thead className="bg-gray-50 border-b border-gray-200">
+                    <table className="w-full text-left min-w-[700px]">
+                        <thead className="bg-gray-50 border-b border-gray-100">
                             <tr>
-                                <th className="px-6 py-4 font-semibold text-gray-600">Image</th>
-                                <th className="px-6 py-4 font-semibold text-gray-600">Name</th>
-                                <th className="px-6 py-4 font-semibold text-gray-600">Price</th>
-                                <th className="px-6 py-4 font-semibold text-gray-600 text-center">Featured</th>
-                                <th className="px-6 py-4 font-semibold text-gray-600 text-right">Actions</th>
+                                <th className="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Image</th>
+                                <th className="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Name</th>
+                                <th className="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Price</th>
+                                <th className="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest text-center">Featured</th>
+                                <th className="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-gray-50">
                             {products.length === 0 ? (
-                                <tr><td colSpan={5} className="p-10 text-center text-gray-400">No products found. Add your first one!</td></tr>
+                                <tr><td colSpan={5} className="p-16 text-center text-gray-400 font-medium">No products found. Add your first one!</td></tr>
                             ) : (
                                 products.map((p) => (
-                                    <tr key={p.id} className="hover:bg-gray-50 transition-colors">
+                                    <tr key={p.id} className="hover:bg-gray-50 transition-colors group">
                                         <td className="px-6 py-4">
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img
-                                                src={p.img || '/placeholder.png'}
-                                                alt={p.name}
-                                                className="w-12 h-12 rounded-lg object-cover border border-gray-200"
-                                            />
+                                            <div className="w-12 h-12 rounded-xl overflow-hidden border border-gray-100 shadow-sm group-hover:shadow-md transition-all">
+                                                <img
+                                                    src={p.img || '/placeholder.png'}
+                                                    alt={p.name}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
                                         </td>
-                                        <td className="px-6 py-4 font-medium text-gray-900">{p.name}</td>
-                                        <td className="px-6 py-4 text-gray-600">ETB {p.price}</td>
+                                        <td className="px-6 py-4">
+                                            <div className="font-bold text-gray-900 text-sm">{p.name}</div>
+                                            <div className="text-[10px] text-gray-400 font-mono mt-0.5">ID: {p.id}</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-[#ff6a00] font-black tracking-tight text-sm">ETB {Number(p.price).toLocaleString()}</td>
                                         <td className="px-6 py-4 text-center">
                                             {p.featured ? (
-                                                <span className="inline-flex items-center justify-center w-6 h-6 bg-green-100 text-green-600 rounded-full">
-                                                    <Check className="w-3 h-3" />
+                                                <span className="inline-flex items-center justify-center w-6 h-6 bg-green-100 text-green-600 rounded-full shadow-inner">
+                                                    <Check className="w-3 h-3 stroke-[3]" />
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center justify-center w-6 h-6 bg-gray-100 text-gray-400 rounded-full">
+                                                <span className="inline-flex items-center justify-center w-6 h-6 bg-gray-100 text-gray-300 rounded-full">
                                                     <XIcon className="w-3 h-3" />
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 flex justify-end gap-3">
-                                            <button
-                                                onClick={() => openEditModal(p)}
-                                                className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit"
-                                            >
-                                                <Edit className="w-4 h-4" />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(p.id)}
-                                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
+                                        <td className="px-6 py-4">
+                                            <div className="flex justify-end gap-3">
+                                                <button
+                                                    onClick={() => openEditModal(p)}
+                                                    className="p-2.5 text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-xl transition-all" title="Edit"
+                                                >
+                                                    <Edit className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(p.id)}
+                                                    className="p-2.5 text-red-600 bg-red-50 hover:bg-red-600 hover:text-white rounded-xl transition-all" title="Delete"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))

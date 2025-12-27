@@ -78,7 +78,7 @@ export default function CartDrawer() {
                         <div className="p-6 border-t border-gray-100 bg-white">
                             <div className="flex justify-between items-center mb-4 text-lg font-bold">
                                 <span>Subtotal</span>
-                                <span>${cartTotal.toFixed(2)}</span>
+                                <span>ETB {cartTotal.toFixed(2)}</span>
                             </div>
                             <p className="text-xs text-center text-gray-400 mb-4">Shipping calculated at checkout</p>
                             <Link

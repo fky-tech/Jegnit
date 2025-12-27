@@ -1,5 +1,6 @@
 'use client';
 import { useCart } from '@/context/CartContext';
+import { calculateDeliveryFee } from '@/utils/delivery';
 import { useState } from 'react';
 import { supabase } from '@/utils/supabase';
 import { Loader, CheckCircle, Star, ShoppingBag, Check } from 'lucide-react';
@@ -77,8 +78,8 @@ function ReviewItem({ item, customerName }: { item: any, customerName: string })
                 onClick={handleSubmit}
                 disabled={submitting || rating === 0}
                 className={`w-full py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-white transition-all ${rating > 0 && !submitting
-                        ? 'bg-black hover:bg-[#ff6a00]'
-                        : 'bg-gray-300 cursor-not-allowed'
+                    ? 'bg-black hover:bg-[#ff6a00]'
+                    : 'bg-gray-300 cursor-not-allowed'
                     }`}
             >
                 {submitting ? 'Submitting...' : 'Submit Review'}
@@ -103,6 +104,17 @@ export default function CheckoutPage() {
         longitude: null as number | null
     });
 
+    const [deliveryFee, setDeliveryFee] = useState(0); // Default to 0
+
+    // Recalculate fee when location changes
+    const updateDeliveryFee = (lat: number, lng: number) => {
+        const result = calculateDeliveryFee(lat, lng);
+        console.log(`Distance from Addis: ${result.distanceKm.toFixed(2)} km`);
+        setDeliveryFee(result.deliveryFee);
+    };
+
+    const [showPaymentInstruction, setShowPaymentInstruction] = useState(false);
+
     const handleLocationSelect = (lat: number, lng: number, address: string) => {
         setFormData(prev => ({
             ...prev,
@@ -110,6 +122,14 @@ export default function CheckoutPage() {
             longitude: lng,
             address: address
         }));
+        updateDeliveryFee(lat, lng);
+    };
+
+    const handlePaymentChange = (paymentMethod: string) => {
+        setFormData({ ...formData, payment: paymentMethod });
+        if (paymentMethod === 'telebirr' || paymentMethod === 'cbe') {
+            setShowPaymentInstruction(true);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -136,8 +156,8 @@ export default function CheckoutPage() {
                 payment_method: formData.payment,
                 status: 'pending',
                 items: items,
-                total: cartTotal + 5,
-                fees: { subtotal: cartTotal, shipping: 5, total: cartTotal + 5 }
+                total: cartTotal + deliveryFee,
+                fees: { subtotal: cartTotal, shipping: deliveryFee, total: cartTotal + deliveryFee }
             };
 
             // Use API route to bypass RLS issues securely
@@ -223,7 +243,7 @@ export default function CheckoutPage() {
             <div className="min-h-screen pt-32 pb-20 container text-center flex flex-col items-center justify-center">
                 <h1 className="text-3xl font-bold mb-4 text-gray-400">No Checkouts Pending</h1>
                 <p className="text-gray-500 mb-8">Your cart is currently empty.</p>
-                <Link href="/shop" className="px-8 py-3 bg-black text-white font-bold rounded-lg hover:bg-gray-800 transition-colors">
+                <Link href="/shop" className="px-8 py-3 bg-[#ff6a00] !text-white font-bold rounded-lg hover:bg-gray-800 transition-colors">
                     Go to Shop
                 </Link>
             </div>
@@ -231,11 +251,11 @@ export default function CheckoutPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 pt-32 pb-20">
+        <div className="min-h-screen bg-gray-50 pt-40 pb-20">
             <div className="container">
                 <h1 className="text-3xl font-bold mb-8 uppercase tracking-widest text-center">Checkout</h1>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto pt-12">
                     {/* Order Form */}
                     <div className="md:col-span-2 bg-white p-8 rounded-2xl shadow-sm">
                         <h2 className="text-xl font-bold mb-6">Shipping Details</h2>
@@ -290,7 +310,7 @@ export default function CheckoutPage() {
                                             name="payment"
                                             value="cod"
                                             checked={formData.payment === 'cod'}
-                                            onChange={e => setFormData({ ...formData, payment: e.target.value })}
+                                            onChange={e => handlePaymentChange(e.target.value)}
                                             className="text-[#ff6a00] focus:ring-[#ff6a00]"
                                         />
                                         <span className="font-bold text-gray-900">Cash on Delivery</span>
@@ -303,7 +323,7 @@ export default function CheckoutPage() {
                                                 name="payment"
                                                 value="telebirr"
                                                 checked={formData.payment === 'telebirr'}
-                                                onChange={e => setFormData({ ...formData, payment: e.target.value })}
+                                                onChange={e => handlePaymentChange(e.target.value)}
                                                 className="text-[#ff6a00] focus:ring-[#ff6a00]"
                                             />
                                             <div className="flex flex-col">
@@ -327,7 +347,7 @@ export default function CheckoutPage() {
                                                 name="payment"
                                                 value="cbe"
                                                 checked={formData.payment === 'cbe'}
-                                                onChange={e => setFormData({ ...formData, payment: e.target.value })}
+                                                onChange={e => handlePaymentChange(e.target.value)}
                                                 className="text-[#ff6a00] focus:ring-[#ff6a00]"
                                             />
                                             <div className="flex flex-col">
@@ -344,11 +364,25 @@ export default function CheckoutPage() {
                                         )}
                                     </label>
 
-                                    {(formData.payment === 'telebirr' || formData.payment === 'cbe') && (
-                                        <div className="p-4 bg-red-50 border border-red-100 rounded-xl animate-in slide-in-from-top-2">
-                                            <p className="text-sm text-red-600 font-bold text-center italic">
-                                                "Take a screenshot of your payment for confirmation. We will ship your order as soon as payment is received"
-                                            </p>
+                                    {/* Payment Instruction Popup */}
+                                    {showPaymentInstruction && (formData.payment === 'telebirr' || formData.payment === 'cbe') && (
+                                        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+                                            <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl text-center transform animate-in zoom-in-95">
+                                                <div className="w-16 h-16 bg-orange-100 text-[#ff6a00] rounded-full flex items-center justify-center mx-auto mb-6">
+                                                    <Star className="w-8 h-8 fill-current" />
+                                                </div>
+                                                <h3 className="text-xl font-bold text-gray-900 mb-4">Payment Confirmation Required</h3>
+                                                <p className="text-gray-600 mb-8 leading-relaxed">
+                                                    Please take a screenshot of your payment for confirmation. We will ship your order as soon as the payment is received.
+                                                </p>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowPaymentInstruction(false)}
+                                                    className="w-full py-3 bg-[#ff6a00] text-white font-bold rounded-xl hover:bg-[#ff8533] transition-colors"
+                                                >
+                                                    OK, I Understand
+                                                </button>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
@@ -360,7 +394,7 @@ export default function CheckoutPage() {
                     <div className="md:col-span-1">
                         <div className="bg-white p-6 rounded-2xl shadow-sm sticky top-32">
                             <h2 className="text-xl font-bold mb-6">Order Summary</h2>
-                            <div className="space-y-4 mb-6 max-h-80 overflow-y-auto pr-2">
+                            <div className="space-y-4 mb-6 max-h-80 overflow-y-auto pr-2 mt-5">
                                 {items.map(item => (
                                     <div key={item.id} className="flex gap-3 text-sm">
                                         <div className="w-12 h-12 bg-gray-100 rounded overflow-hidden flex-shrink-0">
@@ -373,7 +407,7 @@ export default function CheckoutPage() {
                                             </p>
                                         </div>
                                         <div className="font-bold">
-                                            ${(item.price * item.quantity).toFixed(2)}
+                                            ETB {(item.price * item.quantity).toFixed(2)}
                                         </div>
                                     </div>
                                 ))}
@@ -382,15 +416,15 @@ export default function CheckoutPage() {
                             <div className="pt-4 border-t border-gray-100 space-y-2">
                                 <div className="flex justify-between">
                                     <span className="text-gray-600">Subtotal</span>
-                                    <span className="font-bold">${cartTotal.toFixed(2)}</span>
+                                    <span className="font-bold">ETB {cartTotal.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Delivery</span>
-                                    <span className="font-bold">$5.00</span>
+                                    <span className="text-gray-600">Delivery {deliveryFee === 0 && formData.latitude ? '(Addis Ababa)' : ''}</span>
+                                    <span className="font-bold">ETB {deliveryFee.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-100 mt-2">
                                     <span>Total</span>
-                                    <span className="text-[#ff6a00]">${(cartTotal + 5).toFixed(2)}</span>
+                                    <span className="text-[#ff6a00]">ETB {(cartTotal + deliveryFee).toFixed(2)}</span>
                                 </div>
                             </div>
 
@@ -405,7 +439,7 @@ export default function CheckoutPage() {
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

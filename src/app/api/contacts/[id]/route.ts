@@ -10,12 +10,12 @@ export async function DELETE(
         const supabaseAdmin = getSupabaseAdmin();
 
         const { error } = await supabaseAdmin
-            .from('reviews')
+            .from('contacts')
             .delete()
             .eq('id', id);
 
         if (error) {
-            console.error('Supabase Review Delete Error:', error);
+            console.error('Supabase Contact Delete Error:', error);
             return NextResponse.json(
                 { error: error.message },
                 { status: 500 }
@@ -25,7 +25,7 @@ export async function DELETE(
         return NextResponse.json({ success: true });
 
     } catch (err) {
-        console.error('Review Delete API Error:', err);
+        console.error('Contact Delete API Error:', err);
         return NextResponse.json(
             { error: 'Internal Server Error' },
             { status: 500 }

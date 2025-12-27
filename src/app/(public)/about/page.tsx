@@ -6,11 +6,11 @@ export default function AboutPage() {
         <div className="bg-white min-h-screen">
             {/* Hero Header */}
             <div className="relative h-[60vh] bg-black flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#ff6a00]/20 to-black/80 z-10" />
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/50 via-orange-600/30 to-black/90 z-10" />
                 <div className="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1596486489709-77137e3164d9?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center" />
 
                 <div className="relative z-20 text-center text-white px-4">
-                    <span className="block text-[#ff6a00] font-bold tracking-[0.3em] uppercase mb-4 text-sm animate-fade-in-up">The Jegnit Story</span>
+                    <span className="block text-white font-bold tracking-[0.3em] uppercase mb-4 text-sm animate-fade-in-up">The Jegnit Story</span>
                     <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-tight animate-fade-in-up delay-100">
                         Sculpting Confidence.
                     </h1>

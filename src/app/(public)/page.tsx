@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowRight, Loader, ShieldCheck, Truck, Headphones } from 'lucide-react';
 import { supabase } from '@/utils/supabase';
 import ProductCard from '@/components/ProductCard';
+import FAQ from '@/components/FAQ';
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
@@ -157,11 +158,16 @@ export default function Home() {
             <Link href="/contact" className="px-8 py-3 bg-white !text-gray-900 font-bold rounded-lg shadow-lg hover:bg-gray-50 transition-colors">
               Contact Support
             </Link>
-            <Link href="/shop" className="px-8 py-3 bg-transparent border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-colors">
+            <Link href="#faq" className="px-8 py-3 bg-transparent border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-colors">
               Browse FAQ
             </Link>
           </div>
         </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq">
+        <FAQ />
       </section>
     </div>
   );
