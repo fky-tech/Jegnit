@@ -219,7 +219,7 @@ export default function PrivacyPolicy() {
                             If you have any concerns about how we handle your data, our Data Protection Officer is available to help you.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <a href="mailto:privacy@jegnit.com" className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold rounded-xl hover:bg-white/20 transition-all text-center shadow-lg">
+                            <a href="mubagoldlion@gmail.com" className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold rounded-xl hover:bg-white/20 transition-all text-center shadow-lg">
                                 Email Privacy Team
                             </a>
                             <Link href="/contact" className="px-8 py-4 bg-white !text-[#ff6a00] font-bold rounded-xl hover:bg-[#ff8533] hover:!text-white transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 text-center border border-orange-400/20">

@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Facebook, Instagram, Twitter, Mail, MapPin, Phone } from 'lucide-react';
+import { Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react';
+import { FaTiktok, FaTelegramPlane } from 'react-icons/fa';
 
 export default function Footer() {
     return (
@@ -19,14 +20,17 @@ export default function Footer() {
                             Luxury shapewear designed to empower and sculpt. Experience the perfect blend of comfort and elegance.
                         </p>
                         <div className="flex gap-4 justify-center md:justify-start">
-                            <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors">
+                            <a href="https://www.instagram.com/jegnit_shapewear?igsh=Y2RhZnRpNGZwdXcz&utm_source=qr" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors">
                                 <Instagram className="w-5 h-5" />
                             </a>
-                            <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors">
+                            <a href="https://www.facebook.com/share/1G5MSvr6zA/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors">
                                 <Facebook className="w-5 h-5" />
                             </a>
-                            <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors">
-                                <Twitter className="w-5 h-5" />
+                            <a href="https://www.tiktok.com/@jegnitshapewear?_r=1&_t=ZM-92ZhHHd2Yto" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors" title="TikTok">
+                                <FaTiktok className="w-5 h-5" />
+                            </a>
+                            <a href="https://t.me/jegenit1" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors" title="Telegram">
+                                <FaTelegramPlane className="w-5 h-5" />
                             </a>
                         </div>
                     </div>
@@ -59,15 +63,15 @@ export default function Footer() {
                         <ul className="space-y-6">
                             <li className="flex items-start gap-4 justify-center md:justify-start">
                                 <MapPin className="w-5 h-5 text-[#ff6a00] flex-shrink-0 mt-1" />
-                                <span className="text-gray-400">Addis Ababa, Ethiopia</span>
+                                <span className="text-gray-400">Behind Bole Medhanialem, Fana Plaza 2nd floor, Addis Ababa</span>
                             </li>
                             <li className="flex items-center gap-4 justify-center md:justify-start">
                                 <Phone className="w-5 h-5 text-[#ff6a00] flex-shrink-0" />
-                                <span className="text-gray-400">+251 900 000 000</span>
+                                <span className="text-gray-400">+251 91 178 4541</span>
                             </li>
                             <li className="flex items-center gap-4 justify-center md:justify-start">
                                 <Mail className="w-5 h-5 text-[#ff6a00] flex-shrink-0" />
-                                <span className="text-gray-400">info@jegnit.com</span>
+                                <span className="text-gray-400">mubagoldlion@gmail.com</span>
                             </li>
                         </ul>
                     </div>

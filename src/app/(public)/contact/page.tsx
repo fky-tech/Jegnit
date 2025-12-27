@@ -49,21 +49,21 @@ export default function ContactPage() {
                                     <Phone className="w-6 h-6 mt-1" />
                                     <div>
                                         <h3 className="font-semibold">Phone</h3>
-                                        <p className="text-white/80">+1 (555) 123-4567</p>
+                                        <p className="text-white/80">+251 91 178 4541</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-4">
                                     <Mail className="w-6 h-6 mt-1" />
                                     <div>
                                         <h3 className="font-semibold">Email</h3>
-                                        <p className="text-white/80">hello@jegnit.com</p>
+                                        <p className="text-white/80">mubagoldlion@gmail.com</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-4">
                                     <MapPin className="w-6 h-6 mt-1" />
                                     <div>
                                         <h3 className="font-semibold">Office</h3>
-                                        <p className="text-white/80">123 Luxury Lane<br />Addis Ababa, Ethiopia</p>
+                                        <p className="text-white/80">Behind Bole Medhanialem, Fana Plaza 2nd floor<br />Addis Ababa, Ethiopia</p>
                                     </div>
                                 </div>
                             </div>

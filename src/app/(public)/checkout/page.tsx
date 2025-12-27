@@ -127,7 +127,7 @@ export default function CheckoutPage() {
 
     const handlePaymentChange = (paymentMethod: string) => {
         setFormData({ ...formData, payment: paymentMethod });
-        if (paymentMethod === 'telebirr' || paymentMethod === 'cbe') {
+        if (paymentMethod === 'telebirr' || paymentMethod === 'cbe' || paymentMethod === 'abyssinia') {
             setShowPaymentInstruction(true);
         }
     };
@@ -334,7 +334,7 @@ export default function CheckoutPage() {
                                         {formData.payment === 'telebirr' && (
                                             <div className="ml-7 p-3 bg-white border border-orange-100 rounded-lg animate-in zoom-in-95">
                                                 <p className="text-sm font-bold text-gray-700">Telebirr Account:</p>
-                                                <p className="text-lg font-black text-[#ff6a00]">0911 22 33 44</p>
+                                                <p className="text-lg font-black text-[#ff6a00]">+251 91 178 4541</p>
                                                 <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">Jegnit Luxury Shapewear</p>
                                             </div>
                                         )}
@@ -358,14 +358,38 @@ export default function CheckoutPage() {
                                         {formData.payment === 'cbe' && (
                                             <div className="ml-7 p-3 bg-white border border-orange-100 rounded-lg animate-in zoom-in-95">
                                                 <p className="text-sm font-bold text-gray-700">CBE Account:</p>
-                                                <p className="text-lg font-black text-[#ff6a00]">1000 1234 5678 9</p>
+                                                <p className="text-lg font-black text-[#ff6a00]">1000235004694</p>
                                                 <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">Jegnit Luxury - CBE Birr</p>
                                             </div>
                                         )}
                                     </label>
 
+                                    <label className={`flex flex-col gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${formData.payment === 'abyssinia' ? 'border-[#ff6a00] bg-[#ff6a00]/5' : 'border-gray-200 hover:border-[#ff6a00]/30'}`}>
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="radio"
+                                                name="payment"
+                                                value="abyssinia"
+                                                checked={formData.payment === 'abyssinia'}
+                                                onChange={e => handlePaymentChange(e.target.value)}
+                                                className="text-[#ff6a00] focus:ring-[#ff6a00]"
+                                            />
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-gray-900">Abyssinia Bank</span>
+                                                <span className="text-xs text-gray-500">Bank Transfer</span>
+                                            </div>
+                                        </div>
+                                        {formData.payment === 'abyssinia' && (
+                                            <div className="ml-7 p-3 bg-white border border-orange-100 rounded-lg animate-in zoom-in-95">
+                                                <p className="text-sm font-bold text-gray-700">Account Name: Jegnit Luxury</p>
+                                                <p className="text-lg font-black text-[#ff6a00]">207070629</p>
+                                                <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">Bank of Abyssinia</p>
+                                            </div>
+                                        )}
+                                    </label>
+
                                     {/* Payment Instruction Popup */}
-                                    {showPaymentInstruction && (formData.payment === 'telebirr' || formData.payment === 'cbe') && (
+                                    {showPaymentInstruction && (formData.payment === 'telebirr' || formData.payment === 'cbe' || formData.payment === 'abyssinia') && (
                                         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
                                             <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl text-center transform animate-in zoom-in-95">
                                                 <div className="w-16 h-16 bg-orange-100 text-[#ff6a00] rounded-full flex items-center justify-center mx-auto mb-6">
