@@ -10,9 +10,9 @@ export default function FloatingCart() {
         <div className="fixed bottom-8 right-8 flex flex-col gap-4 z-40 items-end animate-fade-in-up delay-200">
             {/* Telegram Button - MessageCircle Icon inside Blue Circle */}
             <Link
-                href="https://t.me/jegnit"
+                href="https://t.me/jegenit1"
                 target="_blank"
-                className="bg-[#0088cc] text-white p-3.5 rounded-full shadow-xl hover:scale-110 transition-transform hover:shadow-2xl flex items-center justify-center backdrop-blur-sm border border-white/20 animate-float"
+                className="bg-[#0088cc] !text-white p-3.5 rounded-full shadow-xl hover:scale-110 transition-transform hover:shadow-2xl flex items-center justify-center backdrop-blur-sm border border-white/20 animate-float"
                 title="Telegram Support"
             >
                 <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
