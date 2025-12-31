@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ShoppingBag, Users, DollarSign, Package, Star, ArrowRight, TrendingUp, Calendar, X, Download } from 'lucide-react';
 import Link from 'next/link';
 import OrderDetailsModal from './OrderDetailsModal';
@@ -29,6 +29,11 @@ export default function DashboardContent({
     const [showRevenueModal, setShowRevenueModal] = useState(false);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     // Filter revenue based on dates
     const filteredRevenueDetails = revenueDetails.filter(curr => {
@@ -230,84 +235,84 @@ export default function DashboardContent({
             </div>
 
             {/* Revenue Details Modal */}
-            {showRevenueModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            {showRevenueModal && isMounted && (
+                <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 overflow-y-auto">
                     <div className="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity" onClick={() => setShowRevenueModal(false)} />
-                    <div className="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-gray-100">
-                        <div className="p-8 bg-black text-white flex justify-between items-center relative overflow-hidden">
+                    <div className="relative w-full max-w-lg bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-gray-100 mx-2 my-auto">
+                        <div className="p-4 sm:p-8 bg-black text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
                                 <DollarSign className="w-32 h-32 text-white transform rotate-12" />
                             </div>
                             <div className="relative z-10">
-                                <h3 className="text-2xl font-black uppercase italic tracking-tighter text-[#ff6a00]">Revenue</h3>
-                                <p className="text-xs text-gray-400 uppercase tracking-widest mt-1 font-bold">Financial Breakdown</p>
+                                <h3 className="text-lg sm:text-2xl font-black uppercase italic tracking-tighter text-[#ff6a00]">Revenue</h3>
+                                <p className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest mt-1 font-bold">Financial Breakdown</p>
                             </div>
-                            <div className="flex items-center gap-3 relative z-10">
+                            <div className="flex items-center gap-2 sm:gap-3 relative z-10 w-full sm:w-auto justify-end">
                                 <button
                                     onClick={downloadRevenueReport}
-                                    className="p-3 bg-white/10 hover:bg-[#ff6a00] rounded-xl transition-colors flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white ring-1 ring-white/20"
+                                    className="p-2 sm:p-3 bg-white/10 hover:bg-[#ff6a00] rounded-xl transition-colors flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-white ring-1 ring-white/20"
                                     title="Download CSV"
                                 >
-                                    <Download className="w-4 h-4" /> <span className="hidden sm:inline">Export</span>
+                                    <Download className="w-4 h-4" /> <span>Export</span>
                                 </button>
-                                <button onClick={() => setShowRevenueModal(false)} className="p-3 bg-white/10 hover:bg-red-500 rounded-xl transition-colors ring-1 ring-white/20">
+                                <button onClick={() => setShowRevenueModal(false)} className="p-2 sm:p-3 bg-white/10 hover:bg-red-500 rounded-xl transition-colors ring-1 ring-white/20">
                                     <X className="w-4 h-4 text-white" />
                                 </button>
                             </div>
                         </div>
 
                         {/* Date Filter Section in Modal */}
-                        <div className="px-8 py-5 bg-gray-50 border-b border-gray-100">
-                            <div className="flex flex-wrap items-end gap-3">
-                                <div className="flex-1 min-w-[120px]">
-                                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">From</label>
+                        <div className="px-5 sm:px-8 py-4 sm:py-5 bg-gray-50 border-b border-gray-100">
+                            <div className="flex flex-wrap items-end gap-2 sm:gap-3">
+                                <div className="flex-1 min-w-[110px]">
+                                    <label className="block text-[8px] sm:text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 sm:mb-1.5 ml-1">From</label>
                                     <input
                                         type="date"
                                         value={startDate}
                                         onChange={(e) => setStartDate(e.target.value)}
-                                        className="w-full px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
+                                        className="w-full px-3 sm:px-4 py-1.5 sm:py-2 bg-white border border-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
                                     />
                                 </div>
-                                <div className="flex-1 min-w-[120px]">
-                                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">To</label>
+                                <div className="flex-1 min-w-[110px]">
+                                    <label className="block text-[8px] sm:text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 sm:mb-1.5 ml-1">To</label>
                                     <input
                                         type="date"
                                         value={endDate}
                                         onChange={(e) => setEndDate(e.target.value)}
-                                        className="w-full px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
+                                        className="w-full px-3 sm:px-4 py-1.5 sm:py-2 bg-white border border-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
                                     />
                                 </div>
                                 {(startDate || endDate) && (
                                     <button
                                         onClick={() => { setStartDate(''); setEndDate(''); }}
-                                        className="px-4 py-2 text-gray-400 hover:text-red-500 text-[10px] font-black uppercase tracking-widest transition-all h-[34px]"
+                                        className="px-2 sm:px-4 py-2 text-gray-400 hover:text-red-500 text-[8px] sm:text-[10px] font-black uppercase tracking-widest transition-all h-[30px] sm:h-[34px]"
                                     >
                                         Reset
                                     </button>
                                 )}
                             </div>
                         </div>
-                        <div className="p-8 max-h-[50vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200">
-                            <div className="space-y-3">
+                        <div className="p-4 sm:p-8 max-h-[50vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200">
+                            <div className="space-y-2 sm:space-y-3">
                                 {sortedDates.map(([date, amount]: [string, any]) => (
-                                    <div key={date} className="flex justify-between items-center p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-[#ff6a00]/30 transition-colors group">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-400 group-hover:text-[#ff6a00] transition-colors">
-                                                <Calendar className="w-4 h-4" />
+                                    <div key={date} className="flex justify-between items-center p-3 sm:p-5 bg-gray-50 rounded-xl sm:rounded-2xl border border-gray-100 hover:border-[#ff6a00]/30 transition-colors group">
+                                        <div className="flex items-center gap-2 sm:gap-4">
+                                            <div className="w-8 h-8 sm:w-10 h-10 bg-white rounded-lg sm:rounded-xl shadow-sm flex items-center justify-center text-gray-400 group-hover:text-[#ff6a00] transition-colors">
+                                                <Calendar className="w-3 h-3 sm:w-4 h-4" />
                                             </div>
-                                            <span className="font-bold text-gray-700">{date}</span>
+                                            <span className="font-bold text-gray-700 text-xs sm:text-base">{date}</span>
                                         </div>
-                                        <span className="font-black text-xl text-gray-900 group-hover:text-[#ff6a00] transition-colors">ETB {amount.toLocaleString()}</span>
+                                        <span className="font-black text-sm sm:text-xl text-gray-900 group-hover:text-[#ff6a00] transition-colors">ETB {amount.toLocaleString()}</span>
                                     </div>
                                 ))}
                             </div>
                         </div>
-                        <div className="p-8 bg-gray-50 border-t border-gray-100">
-                            <div className="flex justify-between items-center text-xl font-black text-gray-900 border-b border-gray-200 pb-6 mb-6">
+                        <div className="p-5 sm:p-8 bg-gray-50 border-t border-gray-100">
+                            <div className="flex justify-between items-center text-base sm:text-xl font-black text-gray-900 border-b border-gray-200 pb-4 sm:pb-6 mb-4 sm:mb-6">
                                 <span className="uppercase tracking-widest">Total Revenue</span>
                                 <span className="text-[#ff6a00]">ETB {totalRevenue.toLocaleString()}</span>
                             </div>
-                            <button onClick={() => setShowRevenueModal(false)} className="w-full py-5 bg-black text-white rounded-2xl font-black uppercase tracking-widest hover:bg-[#ff6a00] hover:shadow-orange-500/20 hover:shadow-xl transition-all shadow-lg active:scale-95">
+                            <button onClick={() => setShowRevenueModal(false)} className="w-full py-4 sm:py-5 bg-black text-white rounded-xl sm:rounded-2xl font-black uppercase tracking-widest hover:bg-[#ff6a00] hover:shadow-orange-500/20 hover:shadow-xl transition-all shadow-lg active:scale-95 text-xs sm:text-base">
                                 Close Report
                             </button>
                         </div>
