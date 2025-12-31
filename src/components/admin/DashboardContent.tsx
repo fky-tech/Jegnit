@@ -20,17 +20,29 @@ export default function DashboardContent({
     ordersCount,
     contactsCount,
     recentOrders,
-    totalRevenue,
+    totalRevenue: initialTotalRevenue,
     avgRating,
     revenueDetails,
     reviewsCount
 }: DashboardContentProps) {
     const [selectedOrder, setSelectedOrder] = useState<any>(null);
     const [showRevenueModal, setShowRevenueModal] = useState(false);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
-    // Group revenue by date, excluding cancelled orders
-    const revenueByDate = revenueDetails.reduce((acc: any, curr: any) => {
-        if (curr.status === 'cancelled') return acc;
+    // Filter revenue based on dates
+    const filteredRevenueDetails = revenueDetails.filter(curr => {
+        if (!startDate && !endDate) return true;
+        const date = new Date(curr.created_at).getTime();
+        const start = startDate ? new Date(startDate).getTime() : 0;
+        const end = endDate ? new Date(endDate).setHours(23, 59, 59, 999) : Infinity;
+        return date >= start && date <= end;
+    });
+
+    const totalRevenue = filteredRevenueDetails.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+
+    // Group revenue by date, excluding cancelled orders (already filtered in parent)
+    const revenueByDate = filteredRevenueDetails.reduce((acc: any, curr: any) => {
         const date = new Date(curr.created_at).toLocaleDateString();
         acc[date] = (acc[date] || 0) + (Number(curr.total) || 0);
         return acc;
@@ -72,9 +84,11 @@ export default function DashboardContent({
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 mt-20 md:mt-5 ml-2">
-            <div className="flex flex-col gap-2">
-                <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tighter italic">Overview</h1>
-                <p className="text-gray-500 font-medium">Welcome back to your command center.</p>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="flex flex-col gap-2">
+                    <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tighter italic">Overview</h1>
+                    <p className="text-gray-500 font-medium">Welcome back to your command center.</p>
+                </div>
             </div>
 
             {/* Stats Grid */}
@@ -239,6 +253,38 @@ export default function DashboardContent({
                                 <button onClick={() => setShowRevenueModal(false)} className="p-3 bg-white/10 hover:bg-red-500 rounded-xl transition-colors ring-1 ring-white/20">
                                     <X className="w-4 h-4 text-white" />
                                 </button>
+                            </div>
+                        </div>
+
+                        {/* Date Filter Section in Modal */}
+                        <div className="px-8 py-5 bg-gray-50 border-b border-gray-100">
+                            <div className="flex flex-wrap items-end gap-3">
+                                <div className="flex-1 min-w-[120px]">
+                                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">From</label>
+                                    <input
+                                        type="date"
+                                        value={startDate}
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                        className="w-full px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
+                                    />
+                                </div>
+                                <div className="flex-1 min-w-[120px]">
+                                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">To</label>
+                                    <input
+                                        type="date"
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                        className="w-full px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
+                                    />
+                                </div>
+                                {(startDate || endDate) && (
+                                    <button
+                                        onClick={() => { setStartDate(''); setEndDate(''); }}
+                                        className="px-4 py-2 text-gray-400 hover:text-red-500 text-[10px] font-black uppercase tracking-widest transition-all h-[34px]"
+                                    >
+                                        Reset
+                                    </button>
+                                )}
                             </div>
                         </div>
                         <div className="p-8 max-h-[50vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200">

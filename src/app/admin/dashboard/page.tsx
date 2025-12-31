@@ -18,7 +18,7 @@ export default async function AdminDashboard() {
         supabaseAdmin.from('orders').select('*', { count: 'exact', head: true }),
         supabaseAdmin.from('contacts').select('*', { count: 'exact', head: true }),
         supabaseAdmin.from('orders').select('*').order('created_at', { ascending: false }).limit(5),
-        supabaseAdmin.from('orders').select('total, created_at').order('created_at', { ascending: false }),
+        supabaseAdmin.from('orders').select('total, created_at, status').neq('status', 'cancelled').order('created_at', { ascending: false }),
         supabaseAdmin.from('reviews').select('rating')
     ]);
 
