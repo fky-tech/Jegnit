@@ -84,7 +84,7 @@ export default function ContactPage() {
                                         type="text"
                                         required
                                         className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-[#ff6a00] focus:ring-1 focus:ring-[#ff6a00] outline-none transition-all"
-                                        placeholder="John Doe"
+                                        placeholder="Sara Abebe"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     />
@@ -95,7 +95,7 @@ export default function ContactPage() {
                                         type="email"
                                         required
                                         className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-[#ff6a00] focus:ring-1 focus:ring-[#ff6a00] outline-none transition-all"
-                                        placeholder="john@example.com"
+                                        placeholder="sara@gmail.com"
                                         value={formData.email}
                                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     />

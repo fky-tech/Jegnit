@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Star, MessageSquare, Trash2, Calendar, User, ShoppingBag } from 'lucide-react';
+import { useNotification } from '@/context/NotificationContext';
 
 const formatDate = (dateString: string) => {
     return new Intl.DateTimeFormat('en-US', {
@@ -11,6 +12,7 @@ const formatDate = (dateString: string) => {
 };
 
 export default function AdminReviews() {
+    const { addNotification } = useNotification();
     const [reviews, setReviews] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -37,12 +39,13 @@ export default function AdminReviews() {
             const response = await fetch(`/api/reviews/${id}`, { method: 'DELETE' });
             if (response.ok) {
                 setReviews(reviews.filter(r => r.id !== id));
+                addNotification('Review deleted successfully!');
             } else {
-                alert('Failed to delete review');
+                addNotification('Failed to delete review', 'error');
             }
         } catch (error) {
             console.error('Failed to delete review:', error);
-            alert('Error deleting review');
+            addNotification('Error deleting review', 'error');
         }
     };
 

@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Loader, Package, Truck, CheckCircle, Clock, ChevronDown, X, User, Phone, MapPin, CreditCard, DollarSign } from 'lucide-react';
+import { useNotification } from '@/context/NotificationContext';
 import OrderDetailsModal from './OrderDetailsModal';
 
 interface OrderTableProps {
@@ -8,6 +9,7 @@ interface OrderTableProps {
 }
 
 export default function OrderTable({ initialOrders }: OrderTableProps) {
+    const { addNotification } = useNotification();
     const [orders, setOrders] = useState(initialOrders);
     const [updatingId, setUpdatingId] = useState<number | null>(null);
     const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
@@ -87,9 +89,10 @@ export default function OrderTable({ initialOrders }: OrderTableProps) {
             if (updatedOrder.error) throw new Error(updatedOrder.error);
 
             setOrders(orders.map(o => o.id === id ? { ...o, status: newStatus } : o));
+            addNotification(`Order status updated to ${newStatus}`);
         } catch (error) {
             console.error(error);
-            alert("Failed to update status");
+            addNotification("Failed to update status", 'error');
         } finally {
             setUpdatingId(null);
         }

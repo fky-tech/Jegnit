@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { ShoppingBag, X, Maximize2, Star } from 'lucide-react';
+import { useNotification } from '@/context/NotificationContext';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
 
@@ -16,6 +17,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+    const { addNotification } = useNotification();
     const { addToCart } = useCart();
     const [showImageModal, setShowImageModal] = useState(false);
     const [rating, setRating] = useState({ averageRating: 0, reviewCount: 0 });
@@ -75,10 +77,11 @@ export default function ProductCard({ product }: ProductCardProps) {
 
     const handleAdd = () => {
         if (!selectedSize && sizeOptions.length > 0) {
-            alert('Please select a size');
+            addNotification('Please select a size', 'info');
             return;
         }
         addToCart(product, selectedSize, currentPrice, selectedColor, currentImage);
+        addNotification(`Added ${product.name} to cart!`, 'success');
     };
 
     return (
@@ -130,7 +133,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </div>
 
                 <div className="p-4 flex flex-col flex-1">
-                    <h3 className="font-bold text-lg mb-1 truncate">{product.name}</h3>
+                    <h3 className="font-bold text-lg mb-1 line-clamp-2 md:line-clamp-none h-14 md:h-auto overflow-hidden leading-tight">{product.name}</h3>
 
                     {/* Rating Display */}
                     {rating.reviewCount > 0 && (
@@ -140,8 +143,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                                     <Star
                                         key={star}
                                         className={`w-3.5 h-3.5 ${star <= Math.round(rating.averageRating)
-                                                ? 'text-yellow-400 fill-yellow-400'
-                                                : 'text-gray-300'
+                                            ? 'text-yellow-400 fill-yellow-400'
+                                            : 'text-gray-300'
                                             }`}
                                     />
                                 ))}
@@ -164,14 +167,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                             <div className="flex flex-wrap gap-3">
                                 {colorOptions.map((opt, idx) => {
                                     const colorMap: Record<string, string> = {
-                                        'Red': '#db2727',
-                                        'Green': '#059669',
-                                        'Pink': '#db2777',
-                                        'Yellow': '#eab308',
                                         'Black': '#000000',
-                                        'White': '#ffffff',
-                                        'Blue': '#2563eb',
-                                        'Beige': '#d1d5db',
+                                        'Brown': '#63442d',
+                                        'Nude': '#e3bc9a',
                                     };
                                     const bgColor = colorMap[opt.name] || '#94a3b8';
 

@@ -1,8 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Mail, Clock, Trash2, Loader } from 'lucide-react';
+import { useNotification } from '@/context/NotificationContext';
 
 export default function AdminContacts() {
+    const { addNotification } = useNotification();
     const [messages, setMessages] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -32,12 +34,13 @@ export default function AdminContacts() {
             const res = await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
             if (res.ok) {
                 setMessages(messages.filter(m => m.id !== id));
+                addNotification('Message deleted successfully!');
             } else {
-                alert('Failed to delete');
+                addNotification('Failed to delete', 'error');
             }
         } catch (error) {
             console.error(error);
-            alert('Error deleting');
+            addNotification('Error deleting', 'error');
         }
     };
 

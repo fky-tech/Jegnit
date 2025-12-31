@@ -2,8 +2,10 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase';
 import { Search, Star, MessageSquare, Send, X, Loader } from 'lucide-react';
+import { useNotification } from '@/context/NotificationContext';
 
 export default function WriteReviewPage() {
+    const { addNotification } = useNotification();
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -63,11 +65,11 @@ export default function WriteReviewPage() {
                     setComment('');
                 }, 2000);
             } else {
-                alert('Failed to submit review. Please try again.');
+                addNotification('Failed to submit review. Please try again.', 'error');
             }
         } catch (error) {
             console.error('Error submitting review:', error);
-            alert('An error occurred.');
+            addNotification('An error occurred.', 'error');
         } finally {
             setSubmitting(false);
         }

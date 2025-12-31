@@ -82,8 +82,8 @@ export default function Footer() {
                         © {new Date().getFullYear()} Jegnit. All rights reserved.
                     </p>
                     <div className="flex gap-6 text-sm text-gray-500">
-                        <a href="#" className="hover:text-white">Terms</a>
-                        <a href="#" className="hover:text-white">Privacy</a>
+                        <Link href="/terms" className="hover:text-white">Terms</Link>
+                        <Link href="/privacy-policy" className="hover:text-white">Privacy</Link>
                     </div>
                 </div>
             </div>

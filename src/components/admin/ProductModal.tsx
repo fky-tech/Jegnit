@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { X, Save, Loader, Plus, Trash2, Upload } from 'lucide-react';
+import { useNotification } from '@/context/NotificationContext';
 import { supabase } from '@/utils/supabase';
 
 interface ProductModalProps {
@@ -16,6 +17,7 @@ interface SizeVariant {
 }
 
 export default function ProductModal({ isOpen, onClose, onSubmit, initialData }: ProductModalProps) {
+    const { addNotification } = useNotification();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -108,7 +110,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
 
         } catch (error: any) {
             console.error('Upload Error:', error);
-            alert(`Failed to upload image: ${error.message}`);
+            addNotification(`Failed to upload image: ${error.message}`, 'error');
         } finally {
             setUploading(false);
         }
@@ -130,18 +132,24 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
         setSizes(newSizes);
     };
 
-    const handleAddColor = () => {
-        setColors([...colors, { name: '', img: '' }]);
+    const handleColorChange = (index: number, value: string) => {
+        const newColors = [...colors];
+        newColors[index] = { ...newColors[index], name: value };
+        setColors(newColors);
     };
 
     const handleRemoveColor = (index: number) => {
         setColors(colors.filter((_, i) => i !== index));
     };
 
-    const handleColorChange = (index: number, field: string, value: string) => {
+    const handleAddColor = () => {
+        if (colors.length >= 3) return; // Only 3 allowed
+        setColors([...colors, { name: 'Black', img: '' }]);
+    };
+
+    const handleColorUrlChange = (index: number, url: string) => {
         const newColors = [...colors];
-        const color = newColors[index] as any;
-        color[field] = value;
+        newColors[index] = { ...newColors[index], img: url };
         setColors(newColors);
     };
 
@@ -163,7 +171,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
             onClose();
         } catch (error) {
             console.error(error);
-            alert("Failed to save product");
+            addNotification("Failed to save product", 'error');
         } finally {
             setLoading(false);
         }
@@ -249,44 +257,62 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                         <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
                             <div className="flex justify-between items-center mb-2">
                                 <label className="block text-sm font-bold text-gray-700">Color Variants</label>
-                                <button type="button" onClick={handleAddColor} className="text-xs flex items-center gap-1 bg-black text-white px-2 py-1 rounded hover:bg-[#ff6a00] transition-colors">
-                                    <Plus className="w-3 h-3" /> Add Color
-                                </button>
+                                {colors.length < 3 && (
+                                    <button type="button" onClick={handleAddColor} className="text-xs flex items-center gap-1 bg-black text-white px-2 py-1 rounded hover:bg-[#ff6a00] transition-colors">
+                                        <Plus className="w-3 h-3" /> Add Color
+                                    </button>
+                                )}
                             </div>
 
                             <div className="space-y-3">
                                 {colors.length === 0 && <p className="text-xs text-gray-400 italic">No specific colors added.</p>}
                                 {colors.map((c, idx) => (
-                                    <div key={idx} className="p-3 bg-white rounded-lg border border-gray-200">
-                                        <div className="flex gap-2 items-center mb-2">
-                                            <input
-                                                type="text"
-                                                placeholder="Color Name (e.g. Black, Nude)"
-                                                className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#ff6a00]"
+                                    <div key={idx} className="p-3 bg-white rounded-lg border border-gray-200 space-y-3">
+                                        <div className="flex gap-2 items-center">
+                                            <select
+                                                className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#ff6a00] outline-none font-bold"
                                                 value={c.name}
-                                                onChange={(e) => handleColorChange(idx, 'name', e.target.value)}
+                                                onChange={(e) => handleColorChange(idx, e.target.value)}
                                                 required
-                                            />
+                                            >
+                                                <option value="Black">Black</option>
+                                                <option value="Brown">Brown</option>
+                                                <option value="Nude">Nude</option>
+                                            </select>
                                             <button type="button" onClick={() => handleRemoveColor(idx)} className="text-red-500 hover:text-red-700 p-1">
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>
-                                        <div className="flex gap-2 items-center">
-                                            <input
-                                                type="url"
-                                                placeholder="Image URL"
-                                                className="flex-1 px-3 py-1.5 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-[#ff6a00]"
-                                                value={c.img}
-                                                onChange={(e) => handleColorChange(idx, 'img', e.target.value)}
-                                            />
-                                            <label className="p-1 px-2 bg-gray-100 border border-gray-300 rounded text-[10px] cursor-pointer hover:bg-gray-200">
-                                                Upload
-                                                <input type="file" className="hidden" onChange={(e) => handleImageUpload(e, idx)} />
-                                            </label>
+
+                                        <div className="grid grid-cols-1 gap-2">
+                                            <div className="flex items-center gap-2">
+                                                <label className="flex-1 flex items-center justify-center p-2 border border-dashed border-gray-200 rounded-xl cursor-pointer hover:bg-orange-50 transition-colors">
+                                                    <Upload className="w-3 h-3 text-gray-400 mr-2" />
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                                                        {uploading ? 'Wait' : 'Upload'}
+                                                    </span>
+                                                    <input
+                                                        type="file"
+                                                        className="hidden"
+                                                        accept="image/*"
+                                                        onChange={(e) => handleImageUpload(e, idx)}
+                                                        disabled={uploading}
+                                                    />
+                                                </label>
+                                                <input
+                                                    type="url"
+                                                    placeholder="URL"
+                                                    className="flex-[2] px-3 py-1.5 text-[10px] border border-gray-200 rounded-lg focus:ring-1 focus:ring-orange-500 outline-none"
+                                                    value={c.img}
+                                                    onChange={(e) => handleColorUrlChange(idx, e.target.value)}
+                                                />
+                                            </div>
+                                            {c.img && (
+                                                <div className="w-full h-12 rounded-lg border border-gray-100 overflow-hidden bg-gray-50 flex items-center justify-center">
+                                                    <img src={c.img} alt="" className="h-full object-contain" />
+                                                </div>
+                                            )}
                                         </div>
-                                        {c.img && (
-                                            <img src={c.img} className="mt-2 w-full h-20 object-contain bg-gray-50 rounded" alt="Color variant" />
-                                        )}
                                     </div>
                                 ))}
                             </div>

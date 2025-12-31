@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Plus, Trash2, Edit, Check, X as XIcon } from 'lucide-react';
+import { useNotification } from '@/context/NotificationContext';
 import ProductModal from './ProductModal';
 
 interface ProductListProps {
@@ -8,6 +9,7 @@ interface ProductListProps {
 }
 
 export default function ProductList({ initialProducts }: ProductListProps) {
+    const { addNotification } = useNotification();
     const [products, setProducts] = useState<any[]>(initialProducts || []);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<any>(null);
@@ -43,8 +45,10 @@ export default function ProductList({ initialProducts }: ProductListProps) {
             // Update local state
             if (editingProduct) {
                 setProducts(products.map(p => p.id === editingProduct.id ? result : p));
+                addNotification('Product updated successfully!');
             } else {
                 setProducts([result, ...products]);
+                addNotification('Product added successfully!');
             }
         } catch (error) {
             console.error("Save Error:", error);
@@ -64,9 +68,10 @@ export default function ProductList({ initialProducts }: ProductListProps) {
             if (!res.ok) throw new Error(result.error || "Delete Failed");
 
             setProducts(products.filter(p => p.id !== id));
+            addNotification('Product deleted successfully!');
         } catch (error) {
             console.error(error);
-            alert('Error deleting product');
+            addNotification('Error deleting product', 'error');
         }
     };
 

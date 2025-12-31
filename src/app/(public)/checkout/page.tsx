@@ -3,7 +3,8 @@ import { useCart } from '@/context/CartContext';
 import { calculateDeliveryFee } from '@/utils/delivery';
 import { useState } from 'react';
 import { supabase } from '@/utils/supabase';
-import { Loader, CheckCircle, Star, ShoppingBag, Check } from 'lucide-react';
+import { Loader, CheckCircle, Star, ShoppingBag, Check, Copy } from 'lucide-react';
+import { useNotification } from '@/context/NotificationContext';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 const MapSelector = dynamic(() => import('@/components/MapSelector'), { ssr: false });
@@ -89,6 +90,7 @@ function ReviewItem({ item, customerName }: { item: any, customerName: string })
 }
 
 export default function CheckoutPage() {
+    const { addNotification } = useNotification();
     const { items, cartTotal, clearCart } = useCart();
     const [submitting, setSubmitting] = useState(false);
     const [orderComplete, setOrderComplete] = useState(false);
@@ -132,6 +134,21 @@ export default function CheckoutPage() {
         }
     };
 
+    const copyToClipboard = (text: string) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text);
+        } else {
+            // Fallback for older browsers
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+        }
+        addNotification('Copied to clipboard: ' + text, 'success');
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitting(true);
@@ -139,7 +156,7 @@ export default function CheckoutPage() {
         try {
             // Check items exist
             if (!items || items.length === 0) {
-                alert("Your cart is empty!");
+                addNotification("Your cart is empty!", 'error');
                 return;
             }
 
@@ -190,7 +207,7 @@ export default function CheckoutPage() {
 
         } catch (error: any) {
             console.error('Checkout Error:', error);
-            alert(`Failed to place order: ${error.message || 'Unknown error'}`);
+            addNotification(`Failed to place order: ${error.message || 'Unknown error'}`, 'error');
         } finally {
             setSubmitting(false);
         }
@@ -219,14 +236,6 @@ export default function CheckoutPage() {
                         </div>
                     </div>
 
-                    <div className="mb-8 p-6 bg-gray-50 border-2 border-dashed border-gray-200 rounded-3xl animate-in fade-in slide-in-from-bottom-4 delay-500 text-left">
-                        <h3 className="text-lg font-black text-gray-900 uppercase italic mb-1">Rate Your Items</h3>
-                        <p className="text-xs text-gray-400 mb-6 uppercase font-bold tracking-widest">How did you like your purchase?</p>
-
-                        {purchasedItems.map((item, index) => (
-                            <ReviewItem key={index} item={item} customerName={formData.name} />
-                        ))}
-                    </div>
 
                     <div className="flex flex-col gap-3">
                         <Link href="/" className="w-full py-4 bg-[#ff6a00] text-white rounded-2xl font-black uppercase tracking-widest hover:bg-[#ff8533] transition-all shadow-xl shadow-orange-900/20 active:scale-95 text-center">
@@ -333,7 +342,12 @@ export default function CheckoutPage() {
                                         </div>
                                         {formData.payment === 'telebirr' && (
                                             <div className="ml-7 p-3 bg-white border border-orange-100 rounded-lg animate-in zoom-in-95">
-                                                <p className="text-sm font-bold text-gray-700">Telebirr Account:</p>
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <p className="text-sm font-bold text-gray-700">Telebirr Account:</p>
+                                                    <button type="button" onClick={() => copyToClipboard('+251911784541')} className="p-1.5 hover:bg-orange-50 rounded-lg transition-colors" title="Copy">
+                                                        <Copy className="w-3 h-3 text-[#ff6a00]" />
+                                                    </button>
+                                                </div>
                                                 <p className="text-lg font-black text-[#ff6a00]">+251 91 178 4541</p>
                                                 <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">Jegnit Luxury Shapewear</p>
                                             </div>
@@ -357,7 +371,12 @@ export default function CheckoutPage() {
                                         </div>
                                         {formData.payment === 'cbe' && (
                                             <div className="ml-7 p-3 bg-white border border-orange-100 rounded-lg animate-in zoom-in-95">
-                                                <p className="text-sm font-bold text-gray-700">CBE Account:</p>
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <p className="text-sm font-bold text-gray-700">CBE Account:</p>
+                                                    <button type="button" onClick={() => copyToClipboard('1000235004694')} className="p-1.5 hover:bg-orange-50 rounded-lg transition-colors" title="Copy">
+                                                        <Copy className="w-3 h-3 text-[#ff6a00]" />
+                                                    </button>
+                                                </div>
                                                 <p className="text-lg font-black text-[#ff6a00]">1000235004694</p>
                                                 <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">Jegnit Luxury - CBE Birr</p>
                                             </div>
@@ -381,7 +400,13 @@ export default function CheckoutPage() {
                                         </div>
                                         {formData.payment === 'abyssinia' && (
                                             <div className="ml-7 p-3 bg-white border border-orange-100 rounded-lg animate-in zoom-in-95">
-                                                <p className="text-sm font-bold text-gray-700">Account Name: Jegnit Luxury</p>
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <p className="text-sm font-bold text-gray-700">Account Number:</p>
+                                                    <button type="button" onClick={() => copyToClipboard('207070629')} className="p-1.5 hover:bg-orange-50 rounded-lg transition-colors" title="Copy">
+                                                        <Copy className="w-3 h-3 text-[#ff6a00]" />
+                                                    </button>
+                                                </div>
+                                                <p className="text-sm font-bold text-gray-700">Name: Jegnit Luxury</p>
                                                 <p className="text-lg font-black text-[#ff6a00]">207070629</p>
                                                 <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider">Bank of Abyssinia</p>
                                             </div>

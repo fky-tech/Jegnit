@@ -58,7 +58,7 @@ export default function PrivacyPolicy() {
                     <div className="prose prose-lg prose-gray max-w-none space-y-12 relative z-10">
                         {/* 1. Information We Collect */}
                         <section>
-                            <h2 className="text-2xl font-black text-gray-900 mb-4 flex items-center gap-3">
+                            <h2 className="text-2xl font-black text-gray-900 !mb-4 flex items-center gap-3">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-orange-100 text-[#ff6a00] text-sm">1</span>
                                 Information We Collect
                             </h2>
@@ -75,7 +75,7 @@ export default function PrivacyPolicy() {
 
                         {/* 2. How We Use Your Information */}
                         <section>
-                            <h2 className="text-2xl font-black text-gray-900 mb-4 flex items-center gap-3">
+                            <h2 className="text-2xl font-black text-gray-900 !mb-4 flex items-center gap-3">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-orange-100 text-[#ff6a00] text-sm">2</span>
                                 How We Use Your Information
                             </h2>
@@ -101,7 +101,7 @@ export default function PrivacyPolicy() {
 
                         {/* 3. Payments */}
                         <section>
-                            <h2 className="text-2xl font-black text-gray-900 mb-4 flex items-center gap-3">
+                            <h2 className="text-2xl font-black text-gray-900 !mb-4 flex items-center gap-3">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-orange-100 text-[#ff6a00] text-sm">3</span>
                                 Payments
                             </h2>
@@ -113,7 +113,7 @@ export default function PrivacyPolicy() {
 
                         {/* 4. Sharing Your Information */}
                         <section>
-                            <h2 className="text-2xl font-black text-gray-900 mb-4 flex items-center gap-3">
+                            <h2 className="text-2xl font-black text-gray-900 !mb-4 flex items-center gap-3">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-orange-100 text-[#ff6a00] text-sm">4</span>
                                 Sharing Your Information
                             </h2>
@@ -132,7 +132,7 @@ export default function PrivacyPolicy() {
 
                         {/* 5. Data Protection */}
                         <section>
-                            <h2 className="text-2xl font-black text-gray-900 mb-4 flex items-center gap-3">
+                            <h2 className="text-2xl font-black text-gray-900 !mb-4 flex items-center gap-3">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-orange-100 text-[#ff6a00] text-sm">5</span>
                                 Data Protection & Security
                             </h2>
@@ -146,7 +146,7 @@ export default function PrivacyPolicy() {
 
                         {/* 6. Your Rights */}
                         <section>
-                            <h2 className="text-2xl font-black text-gray-900 mb-4 flex items-center gap-3">
+                            <h2 className="text-2xl font-black text-gray-900 !mb-4 flex items-center gap-3">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-orange-100 text-[#ff6a00] text-sm">6</span>
                                 Your Rights
                             </h2>

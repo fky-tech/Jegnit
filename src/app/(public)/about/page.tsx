@@ -101,6 +101,10 @@ export default function AboutPage() {
                             <h4 className="text-xl font-bold mb-4 group-hover:text-[#ff6a00] transition-colors">Local Heart</h4>
                             <p className="text-gray-600">Proudly Ethiopian, we understand the local style, climate, and culture better than anyone.</p>
                         </div>
+                        <div className="p-8 border border-gray-100 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-xl transition-all duration-300 group">
+                            <h4 className="text-xl font-bold mb-4 group-hover:text-[#ff6a00] transition-colors">Affordability</h4>
+                            <p className="text-gray-600">Luxury shouldn't be out of reach. We provide high-end quality at prices that respect your budget.</p>
+                        </div>
                     </div>
                 </div>
             </div>

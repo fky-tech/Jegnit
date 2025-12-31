@@ -1,4 +1,5 @@
 import { X, User, Phone, MapPin, CreditCard, DollarSign, Package, Copy, Check, Globe, Maximize2 } from 'lucide-react';
+import { useNotification } from '@/context/NotificationContext';
 import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { createPortal } from 'react-dom';
@@ -28,6 +29,7 @@ interface OrderDetailsModalProps {
 }
 
 export default function OrderDetailsModal({ order, onClose, getStatusInfo }: OrderDetailsModalProps) {
+    const { addNotification } = useNotification();
     const [showMap, setShowMap] = useState(false);
     const [copied, setCopied] = useState(false);
     const [mapFullscreen, setMapFullscreen] = useState(false);
@@ -170,10 +172,15 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
         setTimeout(() => setCopied(false), 2000);
     };
 
+    const handlePhoneCopy = () => {
+        navigator.clipboard.writeText(order.customer_phone);
+        addNotification('Phone number copied!', 'success');
+    };
+
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-xl transition-opacity" />
+            <div className="relative w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 mt-16 md:mt-0">
                 {/* Modal Header */}
                 <div className="p-6 bg-gradient-to-r from-gray-900 to-gray-800 text-white flex justify-between items-center">
                     <div>
@@ -197,6 +204,9 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
                                 <p className="font-bold text-gray-900">{order.customer_name}</p>
                                 <p className="flex items-center gap-2 text-sm text-gray-600">
                                     <Phone className="w-3.5 h-3.5" /> {order.customer_phone}
+                                    <button onClick={handlePhoneCopy} className="p-1 hover:bg-gray-100 rounded transition-colors text-gray-400 hover:text-[#ff6a00]" title="Copy Phone">
+                                        <Copy className="w-3 h-3" />
+                                    </button>
                                 </p>
 
                                 <div className="group relative">

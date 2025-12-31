@@ -5,11 +5,11 @@ import { ArrowRight, Loader, ShieldCheck, Truck, Headphones } from 'lucide-react
 import { supabase } from '@/utils/supabase';
 import ProductCard from '@/components/ProductCard';
 import FAQ from '@/components/FAQ';
+import HeroSlideshow from '@/components/HeroSlideshow';
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [heroImage, setHeroImage] = useState('https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/hero.jpg');
   const [showAllFeatured, setShowAllFeatured] = useState(false);
 
   useEffect(() => {
@@ -64,16 +64,10 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Hero Image */}
+          {/* Hero Image / Slideshow */}
           <div className="lg:py-32 pt-10 order-2 lg:order-2 relative h-[400px] lg:h-[700px] w-full flex items-center justify-center">
-            <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={heroImage}
-                alt="Jegnit Luxury Shapewear"
-                className="absolute inset-0 w-full h-full object-cover"
-                onError={() => setHeroImage('https://images.unsplash.com/photo-1596486489709-77137e3164d9?auto=format&fit=crop&q=80&w=1000')}
-              />
+            <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl bg-gray-50">
+              <HeroSlideshow />
             </div>
           </div>
         </div>

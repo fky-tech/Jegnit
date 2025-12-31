@@ -28,8 +28,9 @@ export default function DashboardContent({
     const [selectedOrder, setSelectedOrder] = useState<any>(null);
     const [showRevenueModal, setShowRevenueModal] = useState(false);
 
-    // Group revenue by date
+    // Group revenue by date, excluding cancelled orders
     const revenueByDate = revenueDetails.reduce((acc: any, curr: any) => {
+        if (curr.status === 'cancelled') return acc;
         const date = new Date(curr.created_at).toLocaleDateString();
         acc[date] = (acc[date] || 0) + (Number(curr.total) || 0);
         return acc;
