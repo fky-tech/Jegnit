@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Plus, Trash2, Loader, Save, Search, Ruler, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 
@@ -12,6 +12,7 @@ interface SizeGuide {
 
 export default function SizeGuideManager() {
     const { addNotification } = useNotification();
+    const scrollRef = useRef<HTMLDivElement>(null);
     const [guides, setGuides] = useState<SizeGuide[]>([]);
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -125,7 +126,7 @@ export default function SizeGuideManager() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Creator */}
-                <div className="lg:col-span-2 bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100">
+                <div ref={scrollRef} className="lg:col-span-2 bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100">
                     <h2 className="text-lg font-black uppercase tracking-widest mb-6 flex items-center gap-2">
                         <Ruler className="w-5 h-5 text-[#ff6a00]" /> Create / Edit Guide
                     </h2>
@@ -153,7 +154,10 @@ export default function SizeGuideManager() {
                                             <td key={cIdx} className="p-1">
                                                 <input
                                                     type="text"
-                                                    className={`w-full p-2 text-center text-sm rounded-lg border ${rIdx === 0 ? 'bg-gray-900 text-white font-bold' : 'bg-white text-gray-600 border-gray-100'}`}
+                                                    className={`w-full p-2 text-center text-sm rounded-lg border transition-all outline-none ${rIdx === 0
+                                                        ? 'bg-gray-900 text-white font-bold border-gray-800'
+                                                        : 'bg-white text-gray-800 border-orange-200 hover:border-orange-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10'
+                                                        }`}
                                                     value={cell}
                                                     onChange={(e) => handleCellChange(rIdx, cIdx, e.target.value)}
                                                 />
@@ -207,6 +211,7 @@ export default function SizeGuideManager() {
                                             onClick={() => {
                                                 setSelectedProduct(g.product_id);
                                                 setTableData(g.content);
+                                                scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
                                             }}
                                             className="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all outline-none"
                                         >
