@@ -159,11 +159,11 @@ export default function HeroManager() {
                     images.map((img) => (
                         <div key={img.id} className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden group">
                             <div className="relative aspect-[16/9] overflow-hidden">
-                                <img src={img.image_url} alt="Hero" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                                <img src={img.image_url} alt="Hero" className="w-full h-full object-cover" />
+                                <div className="absolute inset-0 flex items-center justify-center gap-4">
                                     <button
                                         onClick={() => toggleActive(img)}
-                                        className={`p-3 rounded-full transition-all ${img.is_active ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' : 'bg-white/20 backdrop-blur-md text-white border border-white/30 hover:bg-white/40'}`}
+                                        className={`p-3 rounded-full transition-all shadow-lg ${img.is_active ? 'bg-green-500 text-white shadow-green-500/20' : 'bg-black/50 backdrop-blur-md text-white border border-white/30 hover:bg-black/70'}`}
                                         title={img.is_active ? 'Deactivate' : 'Activate'}
                                     >
                                         {img.is_active ? <Check className="w-5 h-5" /> : <XIcon className="w-5 h-5" />}
