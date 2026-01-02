@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 interface HeroImage {
     id: string;
     image_url: string;
+    duration: number;
 }
 
 export default function HeroSlideshow() {
@@ -20,7 +21,7 @@ export default function HeroSlideshow() {
             try {
                 const { data, error } = await supabase
                     .from('hero_images')
-                    .select('id, image_url')
+                    .select('id, image_url, duration')
                     .eq('is_active', true)
                     .order('order', { ascending: true });
 
@@ -29,11 +30,11 @@ export default function HeroSlideshow() {
                 if (data && data.length > 0) {
                     setImages(data);
                 } else {
-                    setImages([{ id: 'fallback', image_url: fallbackImage }]);
+                    setImages([{ id: 'fallback', image_url: fallbackImage, duration: 5 }]);
                 }
             } catch (err) {
                 console.error("Error fetching hero images", err);
-                setImages([{ id: 'fallback', image_url: fallbackImage }]);
+                setImages([{ id: 'fallback', image_url: fallbackImage, duration: 5 }]);
             } finally {
                 setLoading(false);
             }
@@ -41,16 +42,18 @@ export default function HeroSlideshow() {
         fetchHeroImages();
     }, []);
 
-    // Auto-advance slideshow
+    // Auto-advance slideshow with dynamic duration
     useEffect(() => {
         if (images.length <= 1) return;
 
-        const interval = setInterval(() => {
-            setCurrentIndex((prev) => (prev + 1) % images.length);
-        }, 5000); // 5 seconds
+        const currentDuration = (images[currentIndex]?.duration || 5) * 1000;
 
-        return () => clearInterval(interval);
-    }, [images]);
+        const timeout = setTimeout(() => {
+            setCurrentIndex((prev) => (prev + 1) % images.length);
+        }, currentDuration);
+
+        return () => clearTimeout(timeout);
+    }, [images, currentIndex]);
 
     const nextSlide = () => {
         setCurrentIndex((prev) => (prev + 1) % images.length);

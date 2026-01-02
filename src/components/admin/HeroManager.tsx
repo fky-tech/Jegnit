@@ -8,6 +8,7 @@ interface HeroImage {
     id: string;
     image_url: string;
     order: number;
+    duration: number;
     is_active: boolean;
     created_at: string;
 }
@@ -113,6 +114,24 @@ export default function HeroManager() {
         }
     };
 
+    const updateDuration = async (id: string, duration: number) => {
+        try {
+            const res = await fetch('/api/admin/hero', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, duration }),
+            });
+
+            if (res.ok) {
+                setImages(images.map(img => img.id === id ? { ...img, duration } : img));
+                addNotification('Duration updated successfully!');
+            }
+        } catch (error) {
+            console.error('Duration update error:', error);
+            addNotification('Failed to update duration', 'error');
+        }
+    };
+
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 mt-20 md:mt-5 ml-2">
             <div className="flex justify-between items-end mb-8">
@@ -144,14 +163,14 @@ export default function HeroManager() {
                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
                                     <button
                                         onClick={() => toggleActive(img)}
-                                        className={`p-3 rounded-full transition-all ${img.is_active ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'}`}
+                                        className={`p-3 rounded-full transition-all ${img.is_active ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' : 'bg-white/20 backdrop-blur-md text-white border border-white/30 hover:bg-white/40'}`}
                                         title={img.is_active ? 'Deactivate' : 'Activate'}
                                     >
                                         {img.is_active ? <Check className="w-5 h-5" /> : <XIcon className="w-5 h-5" />}
                                     </button>
                                     <button
                                         onClick={() => handleDelete(img.id)}
-                                        className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all"
+                                        className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all shadow-lg shadow-red-500/20"
                                         title="Delete"
                                     >
                                         <Trash2 className="w-5 h-5" />
@@ -163,10 +182,37 @@ export default function HeroManager() {
                                     </div>
                                 )}
                             </div>
-                            <div className="p-4 flex justify-between items-center">
-                                <div className="text-[10px] text-gray-400 font-mono">ID: {img.id.slice(0, 8)}...</div>
-                                <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                                    {new Date(img.created_at).toLocaleDateString()}
+                            <div className="p-5 space-y-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex-1">
+                                        <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Display Time (Seconds)</label>
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                max="60"
+                                                value={img.duration || 5}
+                                                onChange={(e) => {
+                                                    const val = parseInt(e.target.value);
+                                                    setImages(images.map(i => i.id === img.id ? { ...i, duration: val } : i));
+                                                }}
+                                                className="w-full px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
+                                            />
+                                            <button
+                                                onClick={() => updateDuration(img.id, img.duration || 5)}
+                                                className="px-4 py-2 bg-gray-100 text-gray-600 hover:bg-black hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                                            >
+                                                Save
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="pt-4 border-t border-gray-100 flex justify-between items-center text-[10px] text-gray-400">
+                                    <div className="font-mono">ID: {img.id.slice(0, 8)}...</div>
+                                    <div className="font-bold uppercase tracking-widest flex items-center gap-1.5">
+                                        <ImageIcon className="w-3 h-3" />
+                                        {new Date(img.created_at).toLocaleDateString()}
+                                    </div>
                                 </div>
                             </div>
                         </div>
