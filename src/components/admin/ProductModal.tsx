@@ -208,7 +208,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
             <div className="bg-white rounded-[2rem] w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col animate-in zoom-in-95 duration-300">
                 <div className="px-8 py-6 bg-gradient-to-r from-gray-900 to-black text-white flex justify-between items-center flex-shrink-0">
                     <div>
@@ -242,6 +242,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                 required
                                 value={price}
                                 onChange={(e) => setPrice(e.target.value)}
+                                onWheel={(e) => (e.target as HTMLInputElement).blur()}
                                 className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
                                 placeholder="0.00"
                             />
@@ -254,6 +255,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                 max="100"
                                 value={discount}
                                 onChange={(e) => setDiscount(e.target.value)}
+                                onWheel={(e) => (e.target as HTMLInputElement).blur()}
                                 className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
                                 placeholder="0"
                             />
@@ -286,6 +288,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                             className="w-1/3 px-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#ff6a00]"
                                             value={s.price}
                                             onChange={(e) => handleSizeChange(idx, 'price', e.target.value)}
+                                            onWheel={(e) => (e.target as HTMLInputElement).blur()}
                                             required
                                         />
                                         <button type="button" onClick={() => handleRemoveSize(idx)} className="text-red-500 hover:text-red-700 p-1">

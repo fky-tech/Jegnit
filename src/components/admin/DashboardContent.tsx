@@ -271,7 +271,7 @@ export default function DashboardContent({
 
             {/* Revenue Details Modal */}
             {showRevenueModal && isMounted && (
-                <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 overflow-y-auto">
+                <div className="fixed inset-0 z-[2000] flex items-start justify-center p-4 overflow-y-auto">
                     <div className="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity" onClick={() => setShowRevenueModal(false)} />
                     <div className="relative w-full max-w-lg bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-gray-100 mx-2 my-auto">
                         <div className="p-4 sm:p-8 bg-black text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative overflow-hidden">

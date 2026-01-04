@@ -178,9 +178,9 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
-            <div className="fixed inset-0 bg-black/80 backdrop-blur-xl transition-opacity" />
-            <div className="relative w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 mt-16 md:mt-0">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-8">
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity" onClick={onClose} />
+            <div className="relative w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
                 {/* Modal Header */}
                 <div className="p-6 bg-gradient-to-r from-gray-900 to-gray-800 text-white flex justify-between items-center">
                     <div>

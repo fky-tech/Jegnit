@@ -196,6 +196,7 @@ export default function HeroManager() {
                                                     const val = parseInt(e.target.value);
                                                     setImages(images.map(i => i.id === img.id ? { ...i, duration: val } : i));
                                                 }}
+                                                onWheel={(e) => (e.target as HTMLInputElement).blur()}
                                                 className="w-full px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
                                             />
                                             <button
