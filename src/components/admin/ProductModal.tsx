@@ -21,10 +21,24 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
-        price: '', // Base price
         img: '',
-        featured: false,
     });
+    const [price, setPrice] = useState('');
+    const [discount, setDiscount] = useState('0');
+    const [category, setCategory] = useState('Shapewear');
+    const [featured, setFeatured] = useState(false);
+    const [bestseller, setBestseller] = useState(false);
+
+    // Auto-feature when discount is applied
+    useEffect(() => {
+        const discVal = parseInt(discount) || 0;
+        if (discVal > 0) {
+            setFeatured(true);
+        } else if (!bestseller) {
+            // Only uncheck if not a bestseller
+            setFeatured(false);
+        }
+    }, [discount, bestseller]);
 
     // Manage sizes and colors dynamically
     const [sizes, setSizes] = useState<SizeVariant[]>([]);
@@ -34,21 +48,30 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
         if (initialData) {
             setFormData({
                 name: initialData.name || '',
-                price: initialData.price || '',
                 img: initialData.img || '',
-                featured: initialData.featured || false,
             });
+            setPrice(initialData.price?.toString() || '');
+            setDiscount(initialData.discount?.toString() || '0');
+            setCategory(initialData.category || 'Shapewear');
+            setFeatured(initialData.featured || false);
+            setBestseller(initialData.bestseller || false);
 
             // Parse sizes if available
             try {
+                let parsedSizes: SizeVariant[] = [];
                 if (typeof initialData.sizes === 'string') {
-                    setSizes(JSON.parse(initialData.sizes));
+                    parsedSizes = JSON.parse(initialData.sizes);
                 } else if (Array.isArray(initialData.sizes)) {
-                    setSizes(initialData.sizes);
-                } else {
-                    setSizes([]);
+                    parsedSizes = initialData.sizes;
                 }
+
+                // Ensure price is string for input
+                setSizes(parsedSizes.map(s => ({
+                    ...s,
+                    price: s.price?.toString() || ''
+                })));
             } catch (e) {
+                console.error("Size parse error", e);
                 setSizes([]);
             }
 
@@ -68,10 +91,13 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
         } else {
             setFormData({
                 name: '',
-                price: '',
                 img: '',
-                featured: false,
             });
+            setPrice('');
+            setDiscount('0');
+            setCategory('Shapewear');
+            setFeatured(false);
+            setBestseller(false);
             setSizes([]);
             setColors([]);
         }
@@ -119,7 +145,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
     if (!isOpen) return null;
 
     const handleAddSize = () => {
-        setSizes([...sizes, { size: '', price: formData.price }]);
+        setSizes([...sizes, { size: '', price: price }]);
     };
 
     const handleRemoveSize = (index: number) => {
@@ -159,10 +185,14 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
         try {
             const submission = {
                 ...formData,
-                price: parseFloat(formData.price),
+                price: parseFloat(price),
+                discount: parseInt(discount) || 0,
+                category,
+                featured,
+                bestseller,
                 sizes: sizes.map(s => ({
                     ...s,
-                    price: parseFloat(s.price || formData.price)
+                    price: parseFloat(s.price || price)
                 })),
                 colors: colors
             };
@@ -206,13 +236,26 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Base Price (ETB)</label>
+                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Price (ETB)</label>
                             <input
                                 type="number"
                                 required
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a00] outline-none"
-                                value={formData.price}
-                                onChange={e => setFormData({ ...formData, price: e.target.value })}
+                                value={price}
+                                onChange={(e) => setPrice(e.target.value)}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
+                                placeholder="0.00"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Discount (%)</label>
+                            <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                value={discount}
+                                onChange={(e) => setDiscount(e.target.value)}
+                                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
+                                placeholder="0"
                             />
                         </div>
 
@@ -362,11 +405,32 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                 type="checkbox"
                                 id="featured"
                                 className="w-5 h-5 text-[#ff6a00] rounded focus:ring-[#ff6a00] border-gray-300"
-                                checked={formData.featured}
-                                onChange={e => setFormData({ ...formData, featured: e.target.checked })}
+                                checked={featured}
+                                onChange={e => setFeatured(e.target.checked)}
                             />
                             <label htmlFor="featured" className="text-sm font-medium text-gray-700 select-none cursor-pointer">
                                 Mark as Featured (Home Page)
+                            </label>
+                        </div>
+
+                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                            <input
+                                type="checkbox"
+                                id="bestseller"
+                                className="w-5 h-5 text-[#ff6a00] rounded focus:ring-[#ff6a00] border-gray-300"
+                                checked={bestseller}
+                                onChange={e => {
+                                    setBestseller(e.target.checked);
+                                    if (e.target.checked) {
+                                        setFeatured(true);
+                                    } else if ((parseInt(discount) || 0) <= 0) {
+                                        // Only uncheck if no discount
+                                        setFeatured(false);
+                                    }
+                                }}
+                            />
+                            <label htmlFor="bestseller" className="text-sm font-medium text-gray-700 select-none cursor-pointer">
+                                Mark as Bestseller (Badge)
                             </label>
                         </div>
                     </form>

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/utils/supabase-admin';
+import bcrypt from 'bcryptjs';
+import { cookies } from 'next/headers';
 
 export async function POST(req: Request) {
     try {
@@ -15,7 +17,6 @@ export async function POST(req: Request) {
             .from('admin_users')
             .select('*')
             .eq('email', email)
-            .eq('password_hash', password) // Still using plain text as requested
             .maybeSingle();
 
         if (error) {
@@ -27,8 +28,24 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
         }
 
-        // Return success (Client will set cookie)
-        return NextResponse.json({ success: true, user });
+        // Verify Hashed Password
+        const passwordMatch = await bcrypt.compare(password, user.password_hash);
+        if (!passwordMatch) {
+            return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+        }
+
+        // Set secure session cookie (httponly prevents XSS)
+        const cookieStore = await cookies();
+        cookieStore.set('admin_token', 'true', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            maxAge: 86400 // 1 day
+        });
+
+        // Return success
+        return NextResponse.json({ success: true, user: { email: user.email, full_name: user.full_name } });
     } catch (error) {
         console.error('Login error:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

@@ -26,8 +26,6 @@ export default function AdminLogin() {
             const data = await res.json();
 
             if (res.ok && data.success) {
-                // Set cookie for simple auth middleware
-                document.cookie = `admin_token=true; path=/; max-age=86400;`; // 1 day
                 router.push('/admin/dashboard');
             } else {
                 setError(data.error || 'Invalid credentials');

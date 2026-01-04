@@ -43,9 +43,9 @@ export default function Home() {
         <div className="container grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pt-20">
           {/* Hero Text */}
           <div className="order-1 lg:order-1 space-y-3 animate-fade-in-up text-center lg:text-left">
-            {/* <span className="inline-block px-3 py-1 bg-gray-100 text-[#ff6a00] text-xs font-bold tracking-widest uppercase rounded-sm">
-              Luxury Shapewear
-            </span> */}
+            <span className="inline-block px-3 py-1 bg-gray-100 text-[#ff6a00] text-xs font-bold tracking-widest uppercase rounded-sm">
+              JEGNIT*
+            </span>
             <h1 className="text-5xl lg:text-7xl font-bold leading-tight tracking-tight text-gray-900">
               Sculpt Your <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#ff6a00] to-[#ff914d]">Power</span>
@@ -126,7 +126,7 @@ export default function Home() {
             <div className="text-center mt-12">
               <button
                 onClick={() => setShowAllFeatured(!showAllFeatured)}
-                className="inline-block border-b-2 border-black pb-1 font-bold hover:text-[#ff6a00] hover:border-[#ff6a00] transition-colors"
+                className="inline-flex items-center justify-center px-8 py-3 border-2 border-black text-black font-bold uppercase tracking-widest text-xs hover:bg-black hover:text-white transition-all duration-300 rounded-lg"
               >
                 {showAllFeatured ? 'Show Less' : 'View More Products'}
               </button>

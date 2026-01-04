@@ -1,47 +1,69 @@
 import { getSupabaseAdmin } from '@/utils/supabase-admin';
 import DashboardContent from '@/components/admin/DashboardContent';
 
-export const dynamic = 'force-dynamic';
-
-export default async function AdminDashboard() {
+export default async function AdminDashboardPage() {
     const supabaseAdmin = getSupabaseAdmin();
-    // Fetch real counts concurrently
+
+    // 1. Fetch products, orders, contacts, and reviews counts
+    // 2. Fetch the reset timestamp
     const [
-        { count: productsCount },
-        { count: ordersCount },
-        { count: contactsCount },
-        { data: recentOrders },
-        { data: ordersData },
-        { data: reviewsData }
+        productsRes,
+        ordersRes,
+        contactsRes,
+        reviewsRes,
+        adminRes
     ] = await Promise.all([
         supabaseAdmin.from('products').select('*', { count: 'exact', head: true }),
         supabaseAdmin.from('orders').select('*', { count: 'exact', head: true }),
         supabaseAdmin.from('contacts').select('*', { count: 'exact', head: true }),
-        supabaseAdmin.from('orders').select('*').order('created_at', { ascending: false }).limit(5),
-        supabaseAdmin.from('orders').select('total, created_at, status').neq('status', 'cancelled').order('created_at', { ascending: false }),
-        supabaseAdmin.from('reviews').select('rating')
+        supabaseAdmin.from('reviews').select('rating'),
+        supabaseAdmin.from('admin_users').select('revenue_reset_at').eq('is_active', true).limit(1).maybeSingle()
     ]);
 
-    // Calculate total revenue and group by date
-    const totalRevenue = ordersData?.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0) || 0;
-    const avgRating = reviewsData?.length
+    const productsCount = productsRes.count || 0;
+    const ordersCount = ordersRes.count || 0;
+    const contactsCount = contactsRes.count || 0;
+    const adminData = adminRes.data;
+    const resetDateStr = adminData?.revenue_reset_at || new Date(0).toISOString();
+
+    // 3. Fetch reset-aware data (Recent Orders & Revenue Details)
+    const [
+        recentOrdersRes,
+        revenueDataRes
+    ] = await Promise.all([
+        supabaseAdmin.from('orders')
+            .select('*')
+            .gte('created_at', resetDateStr)
+            .order('created_at', { ascending: false })
+            .limit(5),
+        supabaseAdmin.from('orders')
+            .select('total, created_at, status')
+            .neq('status', 'cancelled')
+            .gte('created_at', resetDateStr)
+            .order('created_at', { ascending: false })
+    ]);
+
+    const recentOrders = recentOrdersRes.data || [];
+    const revenueDetails = revenueDataRes.data || [];
+
+    // Calculate total revenue from filtered data
+    const totalRevenue = revenueDetails.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+
+    const reviewsData = reviewsRes.data || [];
+    const avgRating = reviewsData.length
         ? (reviewsData.reduce((acc, curr) => acc + curr.rating, 0) / reviewsData.length).toFixed(1)
         : '0.0';
 
-    // Pass detailed data to a Client Component for interactivity
-    const revenueDetails = ordersData || [];
-    const reviewsCount = reviewsData?.length || 0;
-
     return (
         <DashboardContent
-            productsCount={productsCount || 0}
-            ordersCount={ordersCount || 0}
-            contactsCount={contactsCount || 0}
-            recentOrders={recentOrders || []}
+            productsCount={productsCount}
+            ordersCount={ordersCount}
+            contactsCount={contactsCount}
+            recentOrders={recentOrders}
             totalRevenue={totalRevenue}
             avgRating={avgRating}
             revenueDetails={revenueDetails}
-            reviewsCount={reviewsCount}
+            reviewsCount={reviewsData.length}
         />
     );
 }

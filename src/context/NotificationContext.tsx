@@ -77,7 +77,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
                             <button
                                 onClick={() => removeNotification(notification.id)}
-                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-400 shrink-0"
+                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-400 shrink-0 opacity-100"
                                 aria-label="Dismiss notification"
                             >
                                 <X className="w-5 h-5" />

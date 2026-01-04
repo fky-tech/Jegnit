@@ -13,6 +13,8 @@ interface ProductCardProps {
         img: string;
         sizes: any; // Can be string (JSON) or array
         featured?: boolean;
+        bestseller?: boolean;
+        discount?: number;
     };
 }
 
@@ -56,9 +58,16 @@ export default function ProductCard({ product }: ProductCardProps) {
 
     const [selectedSize, setSelectedSize] = useState<string>(sizeOptions[0]?.size || '');
     const [selectedColor, setSelectedColor] = useState<string>(colorOptions[0]?.name || '');
-    const [currentPrice, setCurrentPrice] = useState<number>(
-        sizeOptions[0]?.price ? Number(sizeOptions[0].price) : Number(product.price)
-    );
+
+    // Calculate initial price based on size or base price
+    const basePrice = sizeOptions[0]?.price ? Number(sizeOptions[0].price) : Number(product.price);
+    const discount = product.discount || 0;
+
+    const [currentPrice, setCurrentPrice] = useState<number>(basePrice);
+
+    // Calculate discounted price
+    const discountedPrice = discount > 0 ? currentPrice * (1 - discount / 100) : currentPrice;
+
     const [currentImage, setCurrentImage] = useState<string>(
         colorOptions[0]?.img || product.img
     );
@@ -80,7 +89,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             addNotification('Please select a size', 'info');
             return;
         }
-        addToCart(product, selectedSize, currentPrice, selectedColor, currentImage);
+        addToCart(product, selectedSize, discountedPrice, selectedColor, currentImage);
         addNotification(`Added ${product.name} to cart!`, 'success');
     };
 
@@ -114,9 +123,14 @@ export default function ProductCard({ product }: ProductCardProps) {
                     className="relative aspect-[4/5] overflow-hidden bg-gray-100 cursor-zoom-in"
                     onClick={() => setShowImageModal(true)}
                 >
-                    {product.featured && (
+                    {product.bestseller && (
                         <span className="absolute top-3 left-3 bg-[#ff6a00] text-white text-[10px] font-bold px-2 py-1 rounded shadow-md z-10">
                             BESTSELLER
+                        </span>
+                    )}
+                    {(product.discount || 0) > 0 && (
+                        <span className={`absolute top-3 ${product.bestseller ? 'left-24' : 'left-3'} bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md z-10 animate-pulse`}>
+                            {product.discount}% OFF
                         </span>
                     )}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -155,7 +169,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                         </div>
                     )}
 
-                    <p className="text-[#ff6a00] font-bold text-xl mb-3">ETB {currentPrice.toFixed(2)}</p>
+                    <div className="flex items-center gap-2 mb-3">
+                        <p className="text-[#ff6a00] font-bold text-xl">ETB {discountedPrice.toFixed(2)}</p>
+                        {discount > 0 && (
+                            <p className="text-gray-400 text-sm font-bold line-through">ETB {currentPrice.toFixed(2)}</p>
+                        )}
+                    </div>
 
                     {/* Color Selector */}
                     {colorOptions.length > 0 && (

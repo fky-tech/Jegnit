@@ -49,7 +49,7 @@ export default function ContactPage() {
                                     <Phone className="w-6 h-6 mt-1" />
                                     <div>
                                         <h3 className="font-semibold">Phone</h3>
-                                        <p className="text-white/80">+251 91 178 4541</p>
+                                        <p className="text-white/80">0911784541 / 0946414928</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-4">
@@ -69,9 +69,9 @@ export default function ContactPage() {
                             </div>
                         </div>
 
-                        <div className="mt-12 text-white/60 text-sm">
+                        {/* <div className="mt-12 text-white/60 text-sm">
                             <p>@jegnit_official</p>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Form Side */}

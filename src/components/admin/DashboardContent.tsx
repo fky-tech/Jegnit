@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { ShoppingBag, Users, DollarSign, Package, Star, ArrowRight, TrendingUp, Calendar, X, Download } from 'lucide-react';
 import Link from 'next/link';
 import OrderDetailsModal from './OrderDetailsModal';
+import { useNotification } from '@/context/NotificationContext';
 
 interface DashboardContentProps {
     productsCount: number;
@@ -30,6 +31,40 @@ export default function DashboardContent({
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [isMounted, setIsMounted] = useState(false);
+
+    // Revenue clearing state
+    const [showClearPrompt, setShowClearPrompt] = useState(false);
+    const [clearPassword, setClearPassword] = useState('');
+    const [clearing, setClearing] = useState(false);
+
+    const { addNotification } = useNotification();
+
+    const handleClearRevenue = async () => {
+        if (!clearPassword) return;
+        setClearing(true);
+        try {
+            const res = await fetch('/api/admin/revenue/clear', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: clearPassword })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                addNotification('Revenue history cleared successfully!', 'success');
+                setTimeout(() => window.location.reload(), 2000);
+            } else {
+                addNotification(data.error || 'Failed to clear revenue', 'error');
+            }
+        } catch (err) {
+            console.error(err);
+            addNotification('An error occurred during revenue reset', 'error');
+        } finally {
+            setClearing(false);
+            setClearPassword('');
+            setShowClearPrompt(false);
+        }
+    };
 
     useEffect(() => {
         setIsMounted(true);
@@ -247,7 +282,14 @@ export default function DashboardContent({
                                 <h3 className="text-lg sm:text-2xl font-black uppercase italic tracking-tighter text-[#ff6a00]">Revenue</h3>
                                 <p className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest mt-1 font-bold">Financial Breakdown</p>
                             </div>
-                            <div className="flex items-center gap-2 sm:gap-3 relative z-10 w-full sm:w-auto justify-end">
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 relative z-10 w-full sm:w-auto justify-end">
+                                <button
+                                    onClick={() => setShowClearPrompt(true)}
+                                    className="p-2 sm:p-3 bg-white/10 hover:bg-red-500 rounded-xl transition-colors flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-white ring-1 ring-white/20"
+                                    title="Reset History"
+                                >
+                                    <DollarSign className="w-4 h-4" /> <span>Reset</span>
+                                </button>
                                 <button
                                     onClick={downloadRevenueReport}
                                     className="p-2 sm:p-3 bg-white/10 hover:bg-[#ff6a00] rounded-xl transition-colors flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-white ring-1 ring-white/20"
@@ -316,6 +358,44 @@ export default function DashboardContent({
                                 Close Report
                             </button>
                         </div>
+
+                        {/* Password Prompt Overlay for Clearing Revenue */}
+                        {showClearPrompt && (
+                            <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-20 flex items-center justify-center p-6 animate-in fade-in duration-200">
+                                <div className="w-full max-w-xs space-y-4 text-center">
+                                    <div className="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <DollarSign className="w-6 h-6" />
+                                    </div>
+                                    <h4 className="text-xl font-black text-gray-900 uppercase">Confirm Reset</h4>
+                                    <p className="text-xs text-gray-500 font-medium">Enter admin password to permanently delete all revenue history (orders).</p>
+
+                                    <input
+                                        type="password"
+                                        placeholder="Admin Password"
+                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-bold text-center outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                                        value={clearPassword}
+                                        onChange={(e) => setClearPassword(e.target.value)}
+                                        autoFocus
+                                    />
+
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <button
+                                            onClick={() => setShowClearPrompt(false)}
+                                            className="py-3 rounded-xl font-bold text-xs uppercase tracking-widest bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={handleClearRevenue}
+                                            disabled={clearing || !clearPassword}
+                                            className="py-3 rounded-xl font-bold text-xs uppercase tracking-widest bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            {clearing ? '...' : 'Confirm'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
