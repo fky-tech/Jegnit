@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, ShoppingBag, Package, Users, LogOut, MessageSquare, Menu, X, Star, Image as ImageIcon, Ruler } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Package, Users, LogOut, MessageSquare, Menu, X, Star, Image as ImageIcon, Ruler, Eye, EyeOff } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import NotificationBell from '@/components/admin/NotificationBell';
 import { NotificationProvider, useNotification } from '@/context/NotificationContext';
@@ -29,6 +29,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [updating, setUpdating] = useState<'email' | 'password' | null>(null);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     // Fetch current admin info
     useEffect(() => {
@@ -305,25 +307,45 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                                 <form onSubmit={handleChangePassword} className="space-y-4">
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">New Password</label>
-                                        <input
-                                            type="password"
-                                            required
-                                            value={newPassword}
-                                            onChange={e => setNewPassword(e.target.value)}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
-                                            placeholder="••••••••"
-                                        />
+                                        <div className="relative">
+                                            <input
+                                                type={showNewPassword ? 'text' : 'password'}
+                                                required
+                                                value={newPassword}
+                                                onChange={e => setNewPassword(e.target.value)}
+                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all pr-12"
+                                                placeholder="••••••••"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowNewPassword(!showNewPassword)}
+                                                className="absolute right-3 top-3 text-gray-400 hover:text-[#ff6a00] transition-colors p-1"
+                                                title={showNewPassword ? "Hide password" : "Show password"}
+                                            >
+                                                {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                            </button>
+                                        </div>
                                     </div>
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Confirm Password</label>
-                                        <input
-                                            type="password"
-                                            required
-                                            value={confirmPassword}
-                                            onChange={e => setConfirmPassword(e.target.value)}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
-                                            placeholder="••••••••"
-                                        />
+                                        <div className="relative">
+                                            <input
+                                                type={showConfirmPassword ? 'text' : 'password'}
+                                                required
+                                                value={confirmPassword}
+                                                onChange={e => setConfirmPassword(e.target.value)}
+                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all pr-12"
+                                                placeholder="••••••••"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                className="absolute right-3 top-3 text-gray-400 hover:text-[#ff6a00] transition-colors p-1"
+                                                title={showConfirmPassword ? "Hide password" : "Show password"}
+                                            >
+                                                {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                            </button>
+                                        </div>
                                     </div>
                                     <button
                                         type="submit"
