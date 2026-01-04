@@ -35,7 +35,6 @@ export default async function AdminDashboardPage() {
     ] = await Promise.all([
         supabaseAdmin.from('orders')
             .select('*')
-            .gte('created_at', resetDateStr)
             .order('created_at', { ascending: false })
             .limit(5),
         supabaseAdmin.from('orders')
