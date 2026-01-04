@@ -98,14 +98,15 @@ export default function ProductCard({ product }: ProductCardProps) {
             {/* Image Modal */}
             {showImageModal && (
                 <div
-                    className="fixed inset-0 z-[60] bg-black/95 flex items-center justify-center p-4 animate-fade-in"
+                    className="fixed inset-0 z-[2000] bg-black/95 flex items-center justify-center p-4 animate-fade-in"
                     onClick={() => setShowImageModal(false)}
                 >
                     <button
-                        className="absolute top-6 right-6 text-white hover:text-[#ff6a00] transition-colors bg-white/10 p-2 rounded-full backdrop-blur-sm"
+                        className="absolute top-8 right-8 md:top-10 md:right-10 text-white hover:text-[#ff6a00] transition-colors bg-white/20 hover:bg-white/30 p-3 rounded-full backdrop-blur-md shadow-2xl z-[2001]"
                         onClick={() => setShowImageModal(false)}
+                        title="Close"
                     >
-                        <X className="w-8 h-8" />
+                        <X className="w-8 h-8 md:w-10 md:h-10" />
                     </button>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img

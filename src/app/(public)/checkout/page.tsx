@@ -1,7 +1,7 @@
 'use client';
 import { useCart } from '@/context/CartContext';
 import { calculateDeliveryFee } from '@/utils/delivery';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase';
 import { Loader, CheckCircle, Star, ShoppingBag, Check, Copy } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
@@ -116,6 +116,13 @@ export default function CheckoutPage() {
     };
 
     const [showPaymentInstruction, setShowPaymentInstruction] = useState(false);
+
+    // Scroll to top when order is complete
+    useEffect(() => {
+        if (orderComplete) {
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+    }, [orderComplete]);
 
     const handleLocationSelect = (lat: number, lng: number, address: string) => {
         setFormData(prev => ({
