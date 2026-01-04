@@ -1,5 +1,7 @@
 import { getSupabaseAdmin } from '@/utils/supabase-admin';
 import DashboardContent from '@/components/admin/DashboardContent';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function AdminDashboardPage() {
     const supabaseAdmin = getSupabaseAdmin();
@@ -47,11 +49,11 @@ export default async function AdminDashboardPage() {
     const revenueDetails = revenueDataRes.data || [];
 
     // Calculate total revenue from filtered data
-    const totalRevenue = revenueDetails.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+    const totalRevenue = revenueDetails.reduce((acc: number, curr: any) => acc + (Number(curr.total) || 0), 0);
 
     const reviewsData = reviewsRes.data || [];
     const avgRating = reviewsData.length
-        ? (reviewsData.reduce((acc, curr) => acc + curr.rating, 0) / reviewsData.length).toFixed(1)
+        ? (reviewsData.reduce((acc: number, curr: any) => acc + curr.rating, 0) / reviewsData.length).toFixed(1)
         : '0.0';
 
     return (

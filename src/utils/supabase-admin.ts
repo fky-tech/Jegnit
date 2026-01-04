@@ -50,8 +50,10 @@ const loadEnvManually = () => {
     }
 };
 
-// Execute load immediately
-loadEnvManually();
+// Execute load immediately if not in production
+if (process.env.NODE_ENV !== 'production') {
+    loadEnvManually();
+}
 
 export const getSupabaseAdmin = () => {
     // Access env vars
