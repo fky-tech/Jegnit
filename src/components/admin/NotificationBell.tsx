@@ -90,7 +90,7 @@ export default function NotificationBell({ mode = 'light' }: { mode?: 'light' | 
             {showDropdown && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)} />
-                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 z-20 overflow-hidden flex flex-col animate-in slide-in-from-top-2 duration-200">
+                    <div className="fixed md:absolute inset-x-4 md:inset-auto md:right-0 top-16 md:top-full mt-2 w-auto md:w-80 bg-white rounded-xl shadow-2xl border border-gray-200 z-20 overflow-hidden flex flex-col animate-in slide-in-from-top-2 duration-200">
                         <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
                             <h3 className="font-bold text-gray-900 flex items-center gap-2">
                                 <Bell className="w-4 h-4 text-[#ff6a00]" />
@@ -133,7 +133,7 @@ export default function NotificationBell({ mode = 'light' }: { mode?: 'light' | 
                                                     e.stopPropagation();
                                                     dismissNotification(notif.id);
                                                 }}
-                                                className="absolute top-4 right-4 p-1 hover:bg-red-50 text-red-600 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                                                className="absolute top-4 right-4 p-1 hover:bg-red-50 text-red-600 rounded transition-all"
                                             >
                                                 <X className="w-3.5 h-3.5" />
                                             </button>
@@ -198,7 +198,7 @@ export default function NotificationBell({ mode = 'light' }: { mode?: 'light' | 
                                                 e.stopPropagation();
                                                 dismissNotification(notif.id);
                                             }}
-                                            className="absolute top-4 right-4 p-2 bg-white hover:bg-red-50 text-red-600 rounded-xl shadow-sm border border-gray-100 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            className="absolute top-4 right-4 p-2 bg-white hover:bg-red-50 text-red-600 rounded-xl shadow-sm border border-gray-100 transition-all"
                                         >
                                             <X className="w-4 h-4" />
                                         </button>
