@@ -44,7 +44,7 @@ export default function Home() {
           {/* Hero Text */}
           <div className="order-1 lg:order-1 space-y-3 animate-fade-in-up text-center lg:text-left">
             <span className="inline-block px-3 py-1 bg-gray-100 text-[#ff6a00] text-xs font-bold tracking-widest uppercase rounded-sm">
-              JEGNIT*
+              JEGNIT
             </span>
             <h1 className="text-5xl lg:text-7xl font-bold leading-tight tracking-tight text-gray-900">
               Sculpt Your <br />

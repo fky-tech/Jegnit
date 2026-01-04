@@ -33,7 +33,10 @@ export default function Navbar() {
                 <Link href="/" className="flex items-center gap-3 group">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png" alt="Jegnit Logo" className="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300" />
-                    <span className="text-2xl font-black tracking-[0.2em] text-white group-hover:opacity-90 transition-opacity">JEGNIT</span>
+                    <div className="flex flex-col leading-none">
+                        <span className="text-2xl font-black tracking-[0.2em] text-white group-hover:opacity-90 transition-opacity">JEGNIT</span>
+                        <span className="text-[10px] font-bold tracking-[0.3em] text-white/90 uppercase ml-0.5 mt-0.5">Shapewear</span>
+                    </div>
                 </Link>
 
                 {/* Desktop Menu */}
