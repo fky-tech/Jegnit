@@ -191,17 +191,18 @@ export default function HeroManager() {
                                                 type="number"
                                                 min="1"
                                                 max="60"
-                                                value={img.duration || 5}
+                                                value={img.duration || ''}
                                                 onChange={(e) => {
-                                                    const val = parseInt(e.target.value);
-                                                    setImages(images.map(i => i.id === img.id ? { ...i, duration: val } : i));
+                                                    const val = e.target.value;
+                                                    setImages(images.map(i => i.id === img.id ? { ...i, duration: val === '' ? 0 : parseInt(val) } : i));
                                                 }}
-                                                onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                                                className="w-full px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
+                                                inputMode="numeric"
+                                                className="w-full px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all touch-manipulation"
+                                                placeholder="5"
                                             />
                                             <button
                                                 onClick={() => updateDuration(img.id, img.duration || 5)}
-                                                className="px-4 py-2 bg-gray-100 text-gray-600 hover:bg-black hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                                                className="px-4 py-2 bg-gray-100 text-gray-600 hover:bg-black hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
                                             >
                                                 Save
                                             </button>

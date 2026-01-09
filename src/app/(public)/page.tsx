@@ -47,8 +47,8 @@ export default function Home() {
               JEGNIT SHAPEWEAR
             </span>
             <h1 className="text-5xl lg:text-7xl font-bold leading-tight tracking-tight text-gray-900">
-              Sculpt Your <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#ff6a00] to-[#ff914d]">Power</span>
+              Strength in <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#ff6a00] to-[#ff914d]">Womanhood</span>
             </h1>
             <p className="text-lg text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
               Designed for the elegance and strength of Ethiopian women.
