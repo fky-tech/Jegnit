@@ -145,7 +145,7 @@ export default function TermsPage() {
                                 If you need clarification on any of our policies, our legal support team is ready to assist you.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <a href="mailto:mubagoldlion@gmail.com" className="px-10 py-5 bg-[#ff6a00] text-white font-black rounded-2xl hover:bg-orange-600 transition-all text-center shadow-lg uppercase tracking-widest text-xs">
+                                <a href="mailto:jegnitshapewear@gmail.com" className="px-10 py-5 bg-[#ff6a00] text-white font-black rounded-2xl hover:bg-orange-600 transition-all text-center shadow-lg uppercase tracking-widest text-xs">
                                     Email Support Team
                                 </a>
                                 <Link href="/contact" className="px-10 py-5 bg-white !text-black font-black rounded-2xl hover:bg-gray-100 transition-all shadow-xl text-center uppercase tracking-widest text-xs">
