@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { ShoppingBag, X, Maximize2, Star } from 'lucide-react';
+import { ShoppingBag, X, Maximize2, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
@@ -45,19 +45,26 @@ export default function ProductCard({ product }: ProductCardProps) {
     }, [product.id]);
 
     // Parse colors safely
-    let colorOptions: { name: string, img: string }[] = [];
+    let colorOptions: { name: string, images: string[] }[] = [];
     try {
+        let parsed: any[] = [];
         if (typeof (product as any).colors === 'string') {
-            colorOptions = JSON.parse((product as any).colors);
+            parsed = JSON.parse((product as any).colors);
         } else if (Array.isArray((product as any).colors)) {
-            colorOptions = (product as any).colors;
+            parsed = (product as any).colors;
         }
+
+        colorOptions = parsed.map(c => ({
+            name: c.name || 'Black',
+            images: c.images || (c.img ? [c.img] : [])
+        }));
     } catch {
         colorOptions = [];
     }
 
     const [selectedSize, setSelectedSize] = useState<string>(sizeOptions[0]?.size || '');
     const [selectedColor, setSelectedColor] = useState<string>(colorOptions[0]?.name || '');
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     // Calculate initial price based on size or base price
     const basePrice = sizeOptions[0]?.price ? Number(sizeOptions[0].price) : Number(product.price);
@@ -69,19 +76,41 @@ export default function ProductCard({ product }: ProductCardProps) {
     const discountedPrice = discount > 0 ? currentPrice * (1 - discount / 100) : currentPrice;
 
     const [currentImage, setCurrentImage] = useState<string>(
-        colorOptions[0]?.img || product.img
+        colorOptions[0]?.images?.[0] || product.img
     );
+
+    // Sync image when color or index changes
+    useEffect(() => {
+        const color = colorOptions.find(c => c.name === selectedColor);
+        if (color && color.images.length > 0) {
+            setCurrentImage(color.images[currentImageIndex % color.images.length]);
+        } else {
+            setCurrentImage(product.img);
+        }
+    }, [selectedColor, currentImageIndex, colorOptions, product.img]);
 
     const handleSizeSelect = (sizeObj: { size: string, price: string }) => {
         setSelectedSize(sizeObj.size);
         setCurrentPrice(Number(sizeObj.price));
     };
 
-    const handleColorSelect = (colorObj: { name: string, img: string }) => {
+    const handleColorSelect = (colorObj: { name: string, images: string[] }) => {
         setSelectedColor(colorObj.name);
-        if (colorObj.img) {
-            setCurrentImage(colorObj.img);
-        }
+        setCurrentImageIndex(0);
+    };
+
+    const nextImage = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        const color = colorOptions.find(c => c.name === selectedColor);
+        const imagesCount = color?.images.length || 1;
+        setCurrentImageIndex(prev => (prev + 1) % imagesCount);
+    };
+
+    const prevImage = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        const color = colorOptions.find(c => c.name === selectedColor);
+        const imagesCount = color?.images.length || 1;
+        setCurrentImageIndex(prev => (prev - 1 + imagesCount) % imagesCount);
     };
 
     const handleAdd = () => {
@@ -109,12 +138,39 @@ export default function ProductCard({ product }: ProductCardProps) {
                         <X className="w-8 h-8 md:w-10 md:h-10" />
                     </button>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                        src={currentImage || '/placeholder.png'}
-                        alt={product.name}
-                        className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl animate-fade-in-up"
-                        onClick={(e) => e.stopPropagation()}
-                    />
+                    <div className="relative flex items-center justify-center w-full h-full" onClick={(e) => e.stopPropagation()}>
+                        {colorOptions.find(c => c.name === selectedColor)?.images.length! > 1 && (
+                            <>
+                                <button
+                                    onClick={prevImage}
+                                    className="absolute left-4 p-4 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all z-[2002]"
+                                >
+                                    <ChevronLeft className="w-8 h-8" />
+                                </button>
+                                <button
+                                    onClick={nextImage}
+                                    className="absolute right-4 p-4 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all z-[2002]"
+                                >
+                                    <ChevronRight className="w-8 h-8" />
+                                </button>
+                            </>
+                        )}
+                        <img
+                            src={currentImage || '/placeholder.png'}
+                            alt={product.name}
+                            className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl animate-fade-in-up"
+                        />
+                        {colorOptions.find(c => c.name === selectedColor)?.images.length! > 1 && (
+                            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2">
+                                {colorOptions.find(c => c.name === selectedColor)?.images.map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className={`w-2.5 h-2.5 rounded-full transition-all ${i === currentImageIndex ? 'bg-[#ff6a00] w-6' : 'bg-white/30'}`}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
 
@@ -141,8 +197,38 @@ export default function ProductCard({ product }: ProductCardProps) {
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
 
+                    {/* Slideshow Controls (Visible if > 1) */}
+                    {colorOptions.find(c => c.name === selectedColor)?.images.length! > 1 && (
+                        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-2 z-10">
+                            <button
+                                onClick={prevImage}
+                                className="p-2 bg-white/90 hover:bg-white text-gray-900 rounded-full shadow-lg backdrop-blur-md transition-all active:scale-90"
+                            >
+                                <ChevronLeft className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={nextImage}
+                                className="p-2 bg-white/90 hover:bg-white text-gray-900 rounded-full shadow-lg backdrop-blur-md transition-all active:scale-90"
+                            >
+                                <ChevronRight className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Image Counter Indicator */}
+                    {colorOptions.find(c => c.name === selectedColor)?.images.length! > 1 && (
+                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-10">
+                            {colorOptions.find(c => c.name === selectedColor)?.images.map((_, i) => (
+                                <div
+                                    key={i}
+                                    className={`w-1.5 h-1.5 rounded-full transition-all ${i === currentImageIndex ? 'bg-[#ff6a00] w-3' : 'bg-white/50'}`}
+                                />
+                            ))}
+                        </div>
+                    )}
+
                     {/* Hover Overlay Hint */}
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
                         <Maximize2 className="text-white w-8 h-8 drop-shadow-lg" />
                     </div>
                 </div>

@@ -42,7 +42,8 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
 
     // Manage sizes and colors dynamically
     const [sizes, setSizes] = useState<SizeVariant[]>([]);
-    const [colors, setColors] = useState<{ name: string, img: string }[]>([]);
+    const [colors, setColors] = useState<{ name: string, images: string[] }[]>([]);
+    const [activeColorTab, setActiveColorTab] = useState<'Black' | 'Brown' | 'Nude'>('Black');
 
     useEffect(() => {
         if (initialData) {
@@ -77,13 +78,18 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
 
             // Parse colors if available
             try {
+                let parsedColors: any[] = [];
                 if (typeof initialData.colors === 'string') {
-                    setColors(JSON.parse(initialData.colors));
+                    parsedColors = JSON.parse(initialData.colors);
                 } else if (Array.isArray(initialData.colors)) {
-                    setColors(initialData.colors);
-                } else {
-                    setColors([]);
+                    parsedColors = initialData.colors;
                 }
+
+                // Convert old img structure to images array for consistency
+                setColors(parsedColors.map(c => ({
+                    name: c.name || 'Black',
+                    images: c.images || (c.img ? [c.img] : [])
+                })));
             } catch (e) {
                 setColors([]);
             }
@@ -126,10 +132,16 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
 
             const publicUrl = `${BASE_IMAGE_URL}${fileName}`;
 
-            if (colorIndex !== undefined) {
-                const newColors = [...colors];
-                newColors[colorIndex].img = publicUrl;
-                setColors(newColors);
+            if (colorIndex !== undefined || activeColorTab) {
+                const targetColor = colorIndex !== undefined ? colors[colorIndex]?.name : activeColorTab;
+                setColors(prev => {
+                    const existing = prev.find(c => c.name === targetColor);
+                    if (existing) {
+                        return prev.map(c => c.name === targetColor ? { ...c, images: [...c.images, publicUrl] } : c);
+                    } else {
+                        return [...prev, { name: targetColor!, images: [publicUrl] }];
+                    }
+                });
             } else {
                 setFormData(prev => ({ ...prev, img: publicUrl }));
             }
@@ -158,25 +170,10 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
         setSizes(newSizes);
     };
 
-    const handleColorChange = (index: number, value: string) => {
-        const newColors = [...colors];
-        newColors[index] = { ...newColors[index], name: value };
-        setColors(newColors);
-    };
-
-    const handleRemoveColor = (index: number) => {
-        setColors(colors.filter((_, i) => i !== index));
-    };
-
-    const handleAddColor = () => {
-        if (colors.length >= 3) return; // Only 3 allowed
-        setColors([...colors, { name: 'Black', img: '' }]);
-    };
-
-    const handleColorUrlChange = (index: number, url: string) => {
-        const newColors = [...colors];
-        newColors[index] = { ...newColors[index], img: url };
-        setColors(newColors);
+    const handleRemoveColorImage = (colorName: string, imgIdx: number) => {
+        setColors(prev => prev.map(c =>
+            c.name === colorName ? { ...c, images: c.images.filter((_, j) => j !== imgIdx) } : c
+        ));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -194,7 +191,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                     ...s,
                     price: parseFloat(s.price || price)
                 })),
-                colors: colors
+                colors: colors.filter(c => c.images && c.images.length > 0)
             };
 
             await onSubmit(submission);
@@ -300,67 +297,93 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                         </div>
 
                         {/* Dynamic Colors Section */}
-                        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                            <div className="flex justify-between items-center mb-2">
-                                <label className="block text-sm font-bold text-gray-700">Color Variants</label>
-                                {colors.length < 3 && (
-                                    <button type="button" onClick={handleAddColor} className="text-xs flex items-center gap-1 bg-black text-white px-2 py-1 rounded hover:bg-[#ff6a00] transition-colors">
-                                        <Plus className="w-3 h-3" /> Add Color
-                                    </button>
-                                )}
+                        <div className="bg-white border-2 border-gray-100 rounded-[2rem] overflow-hidden">
+                            <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                                <div>
+                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-[#ff6a00]">Color Variants</h4>
+                                    <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Images grouped by color</p>
+                                </div>
                             </div>
 
-                            <div className="space-y-3">
-                                {colors.length === 0 && <p className="text-xs text-gray-400 italic">No specific colors added.</p>}
-                                {colors.map((c, idx) => (
-                                    <div key={idx} className="p-3 bg-white rounded-lg border border-gray-200 space-y-3">
-                                        <div className="flex gap-2 items-center">
-                                            <select
-                                                className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#ff6a00] outline-none font-bold"
-                                                value={c.name}
-                                                onChange={(e) => handleColorChange(idx, e.target.value)}
-                                                required
-                                            >
-                                                <option value="Black">Black</option>
-                                                <option value="Brown">Brown</option>
-                                                <option value="Nude">Nude</option>
-                                            </select>
-                                            <button type="button" onClick={() => handleRemoveColor(idx)} className="text-red-500 hover:text-red-700 p-1">
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 gap-2">
-                                            <div className="flex items-center gap-2">
-                                                <label className="flex-1 flex items-center justify-center p-2 border border-dashed border-gray-200 rounded-xl cursor-pointer hover:bg-orange-50 transition-colors">
-                                                    <Upload className="w-3 h-3 text-gray-400 mr-2" />
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
-                                                        {uploading ? 'Wait' : 'Upload'}
-                                                    </span>
-                                                    <input
-                                                        type="file"
-                                                        className="hidden"
-                                                        accept="image/*"
-                                                        onChange={(e) => handleImageUpload(e, idx)}
-                                                        disabled={uploading}
-                                                    />
-                                                </label>
-                                                <input
-                                                    type="url"
-                                                    placeholder="URL"
-                                                    className="flex-[2] px-3 py-1.5 text-[10px] border border-gray-200 rounded-lg focus:ring-1 focus:ring-orange-500 outline-none"
-                                                    value={c.img}
-                                                    onChange={(e) => handleColorUrlChange(idx, e.target.value)}
-                                                />
-                                            </div>
-                                            {c.img && (
-                                                <div className="w-full h-12 rounded-lg border border-gray-100 overflow-hidden bg-gray-50 flex items-center justify-center">
-                                                    <img src={c.img} alt="" className="h-full object-contain" />
-                                                </div>
-                                            )}
-                                        </div>
+                            <div className="p-4">
+                                <div className="space-y-6">
+                                    {/* SINGLE SELECT OPTION AS REQUESTED */}
+                                    <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 shadow-sm">
+                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Select Color to Manage Images</label>
+                                        <select
+                                            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-sm outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all shadow-sm"
+                                            value={activeColorTab}
+                                            onChange={(e) => setActiveColorTab(e.target.value as 'Black' | 'Brown' | 'Nude')}
+                                        >
+                                            <option value="Black">Manage Black Variant</option>
+                                            <option value="Brown">Manage Brown Variant</option>
+                                            <option value="Nude">Manage Nude Variant</option>
+                                        </select>
                                     </div>
-                                ))}
+
+                                    {/* ACTIVE COLOR CONFIGURATION - FORCED CLEAN RE-RENDER BY KEY */}
+                                    <div key={`color-variant-${activeColorTab}`} className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                        {(() => {
+                                            const colorObj = colors.find(c => c.name === activeColorTab) || { name: activeColorTab, images: [] };
+
+                                            return (
+                                                <div className="p-6 bg-white border-2 border-[#ff6a00]/5 rounded-[2rem] space-y-6 shadow-sm">
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center gap-3">
+                                                            <div
+                                                                className="w-4 h-4 rounded-full border border-black/10"
+                                                                style={{
+                                                                    backgroundColor: activeColorTab === 'Black' ? '#000000' :
+                                                                        activeColorTab === 'Brown' ? '#63442d' : '#e3bc9a'
+                                                                }}
+                                                            />
+                                                            <h5 className="text-[11px] font-black text-gray-900 uppercase tracking-widest">
+                                                                Images for <span className="text-[#ff6a00]">{activeColorTab}</span>
+                                                            </h5>
+                                                        </div>
+                                                        <label className={`flex items-center gap-2 bg-[#ff6a00] text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer hover:bg-black transition-all shadow-lg active:scale-95 ${uploading ? 'opacity-50 cursor-wait' : ''}`}>
+                                                            <Upload className="w-4 h-4" />
+                                                            {uploading ? 'Wait' : 'Add Image'}
+                                                            <input
+                                                                type="file"
+                                                                className="hidden"
+                                                                accept="image/*"
+                                                                onChange={(e) => handleImageUpload(e)} // No need for index, uses activeColorTab
+                                                                disabled={uploading}
+                                                            />
+                                                        </label>
+                                                    </div>
+
+                                                    {colorObj.images && colorObj.images.length > 0 ? (
+                                                        <div className="grid grid-cols-3 gap-4">
+                                                            {colorObj.images.map((img, imgIdx) => (
+                                                                <div key={imgIdx} className="relative aspect-[4/5] rounded-[1.5rem] border border-gray-100 overflow-hidden group/img shadow-sm hover:shadow-2xl transition-all scale-in border-2 hover:border-[#ff6a00]/40">
+                                                                    <img src={img} alt="" className="w-full h-full object-cover" />
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleRemoveColorImage(activeColorTab, imgIdx)}
+                                                                        className="absolute top-2 right-2 p-2.5 bg-black/60 text-white rounded-full opacity-0 group-hover/img:opacity-100 transition-all backdrop-blur-md hover:bg-red-500"
+                                                                    >
+                                                                        <X className="w-4 h-4" />
+                                                                    </button>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    ) : (
+                                                        <div className="py-16 bg-gray-50 rounded-[2.5rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-center px-6">
+                                                            <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-lg mb-4 text-[#ff6a00]/20">
+                                                                <Upload className="w-8 h-8" />
+                                                            </div>
+                                                            <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest leading-relaxed max-w-[200px]">
+                                                                No images for <span className="text-gray-900">{activeColorTab}</span>. Click "Add Image" above to start.
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })()}
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
