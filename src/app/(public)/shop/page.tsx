@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/utils/supabase';
 import { Loader } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
@@ -11,19 +11,54 @@ export default function ShopPage() {
     const [visibleCount, setVisibleCount] = useState(8);
     const [loading, setLoading] = useState(true);
 
+    const [categories, setCategories] = useState<{ name: string, count: number }[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState('Shapewear Fajas');
+
+    // Auto-scroll ref
+    const productsGridRef = useRef<HTMLDivElement>(null);
+
+    const handleCategorySelect = (categoryName: string) => {
+        setSelectedCategory(categoryName);
+
+        // Auto-scroll to products grid with offset for header
+        if (productsGridRef.current) {
+            const yOffset = -120; // Adjust for sticky header + spacing
+            const y = productsGridRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+    };
+
     useEffect(() => {
-        async function fetchProducts() {
+        async function fetchData() {
             try {
-                console.log("Fetching products in ShopPage...");
-                const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+                console.log("Fetching products and categories in ShopPage...");
 
-                if (error) {
-                    console.error("ShopPage Fetch Error:", error);
-                }
+                // Fetch Products
+                const { data: productData, error: productError } = await supabase
+                    .from('products')
+                    .select('*')
+                    .order('created_at', { ascending: false });
 
-                if (data) {
-                    setProducts(data);
-                    setFilteredProducts(data);
+                // Fetch Categories
+                const { data: categoryData, error: categoryError } = await supabase
+                    .from('categories')
+                    .select('name')
+                    .order('name');
+
+                if (productError) console.error("Product Fetch Error:", productError);
+                if (categoryError) console.error("Category Fetch Error:", categoryError);
+
+                if (productData) {
+                    setProducts(productData);
+
+                    // Calculate counts based on fetched products
+                    if (categoryData) {
+                        const counts = categoryData.map(c => ({
+                            name: c.name,
+                            count: productData.filter(p => p.category === c.name).length
+                        }));
+                        setCategories(counts);
+                    }
                 }
             } catch (error) {
                 console.error("ShopPage Unexpected Error:", error);
@@ -31,15 +66,27 @@ export default function ShopPage() {
                 setLoading(false);
             }
         }
-        fetchProducts();
+        fetchData();
     }, []);
 
     useEffect(() => {
-        const filtered = products.filter(product =>
-            product.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        let filtered = products;
+
+        // Filter by Category
+        if (selectedCategory) {
+            filtered = filtered.filter(p => p.category === selectedCategory);
+        }
+
+        // Filter by Search
+        if (searchTerm) {
+            filtered = filtered.filter(product =>
+                product.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
         setFilteredProducts(filtered);
-    }, [searchTerm, products]);
+        setVisibleCount(8); // Reset pagination on filter change
+    }, [searchTerm, products, selectedCategory]);
 
     const handleLoadMore = () => {
         setVisibleCount(prev => prev + 8);
@@ -79,36 +126,84 @@ export default function ShopPage() {
                     <div className="flex justify-center py-20">
                         <Loader className="w-8 h-8 animate-spin text-[#ff6a00]" />
                     </div>
-                ) : filteredProducts.length === 0 ? (
-                    <div className="text-center py-20 text-gray-500">No products found matching &quot;{searchTerm}&quot;.</div>
                 ) : (
-                    <>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-4">
-                            {filteredProducts.slice(0, visibleCount).map((product) => (
-                                <ProductCard key={product.id} product={product} />
-                            ))}
+                    <div className="flex flex-col lg:flex-row gap-12">
+                        {/* Sidebar / Category Filter */}
+                        <div className="lg:w-1/4 flex-shrink-0">
+                            <div className="sticky top-32 space-y-8">
+                                <div>
+                                    <h3 className="text-sm font-black uppercase tracking-widest text-[#ff6a00] !mb-4">Categories</h3>
+                                    <div className="space-y-2">
+                                        {categories.map((cat) => (
+                                            <button
+                                                key={cat.name}
+                                                onClick={() => handleCategorySelect(cat.name)}
+                                                className={`w-full flex justify-between items-center px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${selectedCategory === cat.name
+                                                    ? 'bg-[#ff6a00] text-white shadow-lg shadow-orange-100'
+                                                    : 'bg-white text-gray-500 hover:bg-gray-100'
+                                                    }`}
+                                            >
+                                                <span>{cat.name}</span>
+                                                <span className={`px-2 py-0.5 rounded-full text-[10px] ${selectedCategory === cat.name ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-400'}`}>
+                                                    {cat.count}
+                                                </span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        {visibleCount < filteredProducts.length ? (
-                            <div className="text-center mt-12">
-                                <button
-                                    onClick={handleLoadMore}
-                                    className="btn-outline px-8 py-3"
-                                >
-                                    View More Products
-                                </button>
+                        {/* Product Grid */}
+                        <div className="lg:w-3/4" ref={productsGridRef}>
+                            {/* Active Category Title (Mobile/Desktop) */}
+                            <div className="mb-6 flex items-center justify-between">
+                                <h2 className="text-xl font-black uppercase tracking-widest text-gray-900">
+                                    {selectedCategory} <span className="text-gray-400 ml-2 text-sm">({filteredProducts.length})</span>
+                                </h2>
                             </div>
-                        ) : visibleCount > 8 && (
-                            <div className="text-center mt-12">
-                                <button
-                                    onClick={handleShowLess}
-                                    className="btn-outline px-8 py-3 border-gray-300 text-gray-500 hover:border-[#ff6a00] hover:text-[#ff6a00]"
-                                >
-                                    View Less
-                                </button>
-                            </div>
-                        )}
-                    </>
+
+                            {filteredProducts.length === 0 ? (
+                                <div className="text-center py-20 bg-white rounded-3xl border border-gray-100">
+                                    <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">No products found for this category</p>
+                                    <button
+                                        onClick={() => setSelectedCategory('')} // Optional: Clear filter
+                                        className="mt-4 text-[10px] font-black uppercase tracking-widest text-[#ff6a00] hover:underline"
+                                    >
+                                        View All Products
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                        {filteredProducts.slice(0, visibleCount).map((product) => (
+                                            <ProductCard key={product.id} product={product} />
+                                        ))}
+                                    </div>
+
+                                    {visibleCount < filteredProducts.length ? (
+                                        <div className="text-center mt-12">
+                                            <button
+                                                onClick={handleLoadMore}
+                                                className="btn-outline px-8 py-3"
+                                            >
+                                                View More Products
+                                            </button>
+                                        </div>
+                                    ) : visibleCount > 8 && (
+                                        <div className="text-center mt-12">
+                                            <button
+                                                onClick={handleShowLess}
+                                                className="btn-outline px-8 py-3 border-gray-300 text-gray-500 hover:border-[#ff6a00] hover:text-[#ff6a00]"
+                                            >
+                                                View Less
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    </div>
                 )}
             </div>
         </div>

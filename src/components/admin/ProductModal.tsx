@@ -25,7 +25,10 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
     });
     const [price, setPrice] = useState('');
     const [discount, setDiscount] = useState('0');
-    const [category, setCategory] = useState('Shapewear');
+    const [category, setCategory] = useState('Shapewear Fajas');
+    const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+    const [isAddingCategory, setIsAddingCategory] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState('');
     const [featured, setFeatured] = useState(false);
     const [bestseller, setBestseller] = useState(false);
 
@@ -40,6 +43,36 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
         }
     }, [discount, bestseller]);
 
+    // Fetch categories
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const { data, error } = await supabase.from('categories').select('name').order('name');
+            if (data) {
+                setAvailableCategories(data.map(c => c.name));
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    const handleAddCategory = async () => {
+        if (!newCategoryName.trim()) return;
+        setLoading(true);
+        try {
+            const { error } = await supabase.from('categories').insert([{ name: newCategoryName.trim() }]);
+            if (error) throw error;
+
+            setAvailableCategories(prev => [...prev, newCategoryName.trim()].sort());
+            setCategory(newCategoryName.trim());
+            setIsAddingCategory(false);
+            setNewCategoryName('');
+            addNotification('Category created successfully', 'success');
+        } catch (error: any) {
+            addNotification(`Failed to create category: ${error.message}`, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // Manage sizes and colors dynamically
     const [sizes, setSizes] = useState<SizeVariant[]>([]);
     const [colors, setColors] = useState<{ name: string, images: string[] }[]>([]);
@@ -53,7 +86,11 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
             });
             setPrice(initialData.price?.toString() || '');
             setDiscount(initialData.discount?.toString() || '0');
-            setCategory(initialData.category || 'Shapewear');
+
+            // Handle legacy 'Shapewear' or use current
+            const initCat = initialData.category || 'Shapewear Fajas';
+            setCategory(initCat === 'Shapewear' ? 'Shapewear Fajas' : initCat);
+
             setFeatured(initialData.featured || false);
             setBestseller(initialData.bestseller || false);
 
@@ -101,7 +138,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
             });
             setPrice('');
             setDiscount('0');
-            setCategory('Shapewear');
+            setCategory('Shapewear Fajas');
             setFeatured(false);
             setBestseller(false);
             setSizes([]);
@@ -254,8 +291,60 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                 onChange={(e) => setDiscount(e.target.value)}
                                 onWheel={(e) => (e.target as HTMLInputElement).blur()}
                                 className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
-                                placeholder="0"
                             />
+                        </div>
+
+                        {/* Category Selection */}
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Category</label>
+                            {!isAddingCategory ? (
+                                <div className="flex gap-2">
+                                    <select
+                                        className="flex-1 px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-[#ff6a00]/20 focus:border-[#ff6a00] transition-all"
+                                        value={category}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                    >
+                                        {availableCategories.map(c => (
+                                            <option key={c} value={c}>{c}</option>
+                                        ))}
+                                    </select>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsAddingCategory(true)}
+                                        className="px-3 bg-gray-900 text-white rounded-xl hover:bg-[#ff6a00] transition-colors flex items-center justify-center shadow-sm"
+                                        title="Add New Category"
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex gap-2 animate-in fade-in duration-200">
+                                    <input
+                                        type="text"
+                                        className="flex-1 px-4 py-2 bg-white border-2 border-[#ff6a00]/20 rounded-xl text-xs font-bold outline-none focus:border-[#ff6a00] shadow-sm"
+                                        placeholder="New Category Name"
+                                        value={newCategoryName}
+                                        onChange={(e) => setNewCategoryName(e.target.value)}
+                                        autoFocus
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleAddCategory}
+                                        className="px-3 bg-[#ff6a00] text-white rounded-xl hover:bg-[#ff6a00]/90 transition-colors shadow-sm"
+                                        title="Save Category"
+                                    >
+                                        <Save className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsAddingCategory(false)}
+                                        className="px-3 bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 transition-colors"
+                                        title="Cancel"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         {/* Dynamic Sizes Section */}
