@@ -451,9 +451,9 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                                                     <button
                                                                         type="button"
                                                                         onClick={() => handleRemoveColorImage(activeColorTab, imgIdx)}
-                                                                        className="absolute top-2 right-2 p-2.5 bg-black/60 text-white rounded-full opacity-0 group-hover/img:opacity-100 transition-all backdrop-blur-md hover:bg-red-500"
+                                                                        className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full shadow-lg hover:bg-black transition-colors transform active:scale-95"
                                                                     >
-                                                                        <X className="w-4 h-4" />
+                                                                        <X className="w-3 h-3" />
                                                                     </button>
                                                                 </div>
                                                             ))}

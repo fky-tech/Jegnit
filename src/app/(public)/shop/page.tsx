@@ -12,7 +12,7 @@ export default function ShopPage() {
     const [loading, setLoading] = useState(true);
 
     const [categories, setCategories] = useState<{ name: string, count: number }[]>([]);
-    const [selectedCategory, setSelectedCategory] = useState('Shapewear Fajas');
+    const [selectedCategory, setSelectedCategory] = useState('');
 
     // Auto-scroll ref
     const productsGridRef = useRef<HTMLDivElement>(null);
@@ -105,19 +105,44 @@ export default function ShopPage() {
                 </h1>
 
                 {/* Search Bar - Removed sticky */}
-                <div className="max-w-md mx-auto mb-12 mt-7">
-                    <div className="relative group">
-                        <input
-                            type="text"
-                            placeholder="Search products..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full px-6 py-4 bg-white rounded-full shadow-lg border-2 border-transparent focus:border-[#ff6a00] outline-none text-gray-900 font-bold placeholder-gray-400 transition-all group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)]"
-                        />
-                        <div className="absolute top-1/2 right-6 -translate-y-1/2 text-gray-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                {/* Unified Search & Filter Toolbar */}
+                <div className="max-w-4xl mx-auto mb-12 mt-7">
+                    <div className="flex flex-col md:flex-row gap-4 items-center">
+                        {/* Search Input */}
+                        <div className="relative group w-full md:flex-1">
+                            <input
+                                type="text"
+                                placeholder="Search products..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full px-6 py-4 bg-white rounded-full shadow-lg border-2 border-transparent focus:border-[#ff6a00] outline-none text-gray-900 font-bold placeholder-gray-400 transition-all group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)]"
+                            />
+                            <div className="absolute top-1/2 right-6 -translate-y-1/2 text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        {/* Category Dropdown */}
+                        <div className="w-full md:w-72 flex-shrink-0">
+                            <div className="relative group">
+                                <select
+                                    className="w-full px-6 py-4 bg-white rounded-full shadow-lg border-2 border-transparent focus:border-[#ff6a00] outline-none text-gray-900 font-bold appearance-none cursor-pointer transition-all group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] pr-12"
+                                    value={selectedCategory}
+                                    onChange={(e) => handleCategorySelect(e.target.value)}
+                                >
+                                    <option value="">All Categories ({products.length})</option>
+                                    {categories.map(cat => (
+                                        <option key={cat.name} value={cat.name}>{cat.name} ({cat.count})</option>
+                                    ))}
+                                </select>
+                                <div className="absolute top-1/2 right-6 -translate-y-1/2 text-gray-400 pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -127,39 +152,13 @@ export default function ShopPage() {
                         <Loader className="w-8 h-8 animate-spin text-[#ff6a00]" />
                     </div>
                 ) : (
-                    <div className="flex flex-col lg:flex-row gap-12">
-                        {/* Sidebar / Category Filter */}
-                        <div className="lg:w-1/4 flex-shrink-0">
-                            <div className="sticky top-32 space-y-8">
-                                <div>
-                                    <h3 className="text-sm font-black uppercase tracking-widest text-[#ff6a00] !mb-4">Categories</h3>
-                                    <div className="space-y-2">
-                                        {categories.map((cat) => (
-                                            <button
-                                                key={cat.name}
-                                                onClick={() => handleCategorySelect(cat.name)}
-                                                className={`w-full flex justify-between items-center px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${selectedCategory === cat.name
-                                                    ? 'bg-[#ff6a00] text-white shadow-lg shadow-orange-100'
-                                                    : 'bg-white text-gray-500 hover:bg-gray-100'
-                                                    }`}
-                                            >
-                                                <span>{cat.name}</span>
-                                                <span className={`px-2 py-0.5 rounded-full text-[10px] ${selectedCategory === cat.name ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-400'}`}>
-                                                    {cat.count}
-                                                </span>
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                    <div>
                         {/* Product Grid */}
-                        <div className="lg:w-3/4" ref={productsGridRef}>
+                        <div className="w-full" ref={productsGridRef}>
                             {/* Active Category Title (Mobile/Desktop) */}
                             <div className="mb-6 flex items-center justify-between">
                                 <h2 className="text-xl font-black uppercase tracking-widest text-gray-900">
-                                    {selectedCategory} <span className="text-gray-400 ml-2 text-sm">({filteredProducts.length})</span>
+                                    {selectedCategory || 'All Products'} <span className="text-gray-400 ml-2 text-sm">({filteredProducts.length})</span>
                                 </h2>
                             </div>
 
