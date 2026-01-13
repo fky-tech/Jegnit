@@ -6,13 +6,8 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { Maximize2, MapPin, Globe, Search } from 'lucide-react';
 
-// Fix for default Leaflet icons
-const icon: any = typeof window !== 'undefined' ? L.icon({
-    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-}) : null;
+// Using default Leaflet marker icon
+const icon: any = typeof window !== 'undefined' ? undefined : null;
 
 interface MapSelectorProps {
     onLocationSelect: (lat: number, lng: number, address: string) => void;
@@ -154,6 +149,10 @@ export default function MapSelector({ onLocationSelect, initialLat = 9.0333, ini
                     await reverseGeocodeGoogle(lat, lng);
                 }
             });
+
+            // CRITICAL: Restore marker immediately on the new map instance
+            updateMarker(mapCenter[0], mapCenter[1]);
+
         } catch (error) {
             console.error("Error initializing Google Map:", error);
             setGoogleError(true);
@@ -171,14 +170,19 @@ export default function MapSelector({ onLocationSelect, initialLat = 9.0333, ini
 
         try {
             if (markerInstance.current) {
-                markerInstance.current.position = { lat, lng };
+                // Update position using setPosition method for standard Marker
+                (markerInstance.current as any).setPosition({ lat, lng });
+                // Re-bind marker to current map instance if it changed
+                if ((markerInstance.current as any).getMap() !== mapInstance.current) {
+                    (markerInstance.current as any).setMap(mapInstance.current);
+                }
             } else {
-                const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
-                markerInstance.current = new AdvancedMarkerElement({
+                // Use standard Google Maps marker
+                markerInstance.current = new google.maps.Marker({
                     map: mapInstance.current,
                     position: { lat, lng },
                     title: "Delivery Location",
-                });
+                }) as any;
             }
             mapInstance.current.panTo({ lat, lng });
         } catch (error) {
@@ -318,7 +322,7 @@ export default function MapSelector({ onLocationSelect, initialLat = 9.0333, ini
                 }`}
         >
             {/* Search Input */}
-            <div className={`absolute top-4 left-4 right-16 z-[1002] transition-all duration-300`}>
+            <div className="absolute top-4 left-4 right-16 z-[1002] transition-all duration-300">
                 <div className="relative group">
                     <input
                         ref={inputRef}

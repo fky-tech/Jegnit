@@ -1,6 +1,6 @@
 import { X, User, Phone, MapPin, CreditCard, DollarSign, Package, Copy, Check, Globe, Maximize2 } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
-import { useState, useEffect, useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { createPortal } from 'react-dom';
 
@@ -14,12 +14,7 @@ let icon: any = null;
 
 if (typeof window !== 'undefined') {
     L = require('leaflet');
-    icon = L.icon({
-        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-    });
+    icon = undefined; // Use default Leaflet icon
 }
 
 interface OrderDetailsModalProps {
@@ -32,6 +27,15 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
     const { addNotification } = useNotification();
     const [showMap, setShowMap] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [activeTab, setActiveTab] = useState<'details' | 'items'>('details');
+    const [showScreenshotLightbox, setShowScreenshotLightbox] = useState(false);
+    const hasDeletedProof = useRef(false);
+
+    // Reset verify flag when order changes
+    useEffect(() => {
+        hasDeletedProof.current = false;
+        setShowScreenshotLightbox(false);
+    }, [order?.id]);
     const [mapFullscreen, setMapFullscreen] = useState(false);
 
     // Google Maps States
@@ -63,7 +67,7 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
                                     zoomControl: true
                                 });
 
-                                new AdvancedMarkerElement({
+                                new google.maps.Marker({
                                     map,
                                     position: { lat: order.latitude, lng: order.longitude },
                                     title: "Delivery Location",
@@ -148,7 +152,7 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
                     zoomControl: true
                 });
 
-                new AdvancedMarkerElement({
+                new google.maps.Marker({
                     map,
                     position: { lat: order.latitude, lng: order.longitude },
                     title: "Delivery Location",
@@ -299,7 +303,7 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
                             </div>
                         </div>
 
-                        {/* Order Meta */}
+                        {/* Payment & Status */}
                         <div className="space-y-4">
                             <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
                                 <CreditCard className="w-3 h-3" /> Payment & Status
@@ -320,8 +324,77 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
                                     <span className="text-sm font-bold">{new Date(order.created_at).toLocaleDateString()}</span>
                                 </div>
                             </div>
+
+                            {/* Payment Screenshot (Auto-Delete) */}
+                            {order.screenshot_img && (
+                                <div className="mt-4 p-4 bg-orange-50/50 border border-orange-100 rounded-xl space-y-3">
+                                    <h5 className="text-[10px] font-black text-[#ff6a00] uppercase tracking-widest flex items-center gap-2">
+                                        <Check className="w-3 h-3" /> Payment Proof
+                                    </h5>
+
+                                    {/* Thumbnail - Click to open Lightbox */}
+                                    <div
+                                        onClick={() => setShowScreenshotLightbox(true)}
+                                        className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden border border-gray-200 cursor-zoom-in hover:opacity-90 transition-opacity"
+                                    >
+                                        <img
+                                            src={order.screenshot_img}
+                                            alt="Payment Proof"
+                                            className="w-full h-full object-contain"
+                                        />
+                                        <div className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur text-white text-[10px] p-1 text-center font-medium">
+                                            Click to view full screen
+                                        </div>
+                                    </div>
+
+                                    <p className="text-[10px] text-gray-400 text-center">
+                                        Image will be auto-deleted after viewing.
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div >
+
+                    {/* Screenshot Lightbox */}
+                    {showScreenshotLightbox && order.screenshot_img && (
+                        <div className="fixed inset-0 z-[10000] bg-black/95 backdrop-blur-sm flex flex-col items-center justify-center p-4 animate-in fade-in duration-200">
+                            <button
+                                onClick={() => setShowScreenshotLightbox(false)}
+                                className="absolute top-4 right-4 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+
+                            <div className="relative max-w-5xl w-full h-full flex flex-col items-center justify-center">
+                                <img
+                                    src={order.screenshot_img}
+                                    alt="Payment Proof Fullscreen"
+                                    className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+                                    onLoad={() => {
+                                        // Trigger auto-delete only when fully viewed in Lightbox
+                                        if (!hasDeletedProof.current) {
+                                            hasDeletedProof.current = true;
+                                            console.log("Auto-deleting proof...");
+                                            fetch('/api/admin/orders/cleanup-proof', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ imagePath: order.screenshot_img })
+                                            }).then(res => res.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        addNotification('Proof verified & deleted from storage.', 'success');
+                                                    }
+                                                })
+                                                .catch(console.error);
+                                        }
+                                    }}
+                                />
+                                <div className="mt-4 text-white/70 text-sm font-medium bg-black/50 px-4 py-2 rounded-full backdrop-blur">
+                                    Viewing verifies payment. File is being deleted from secure storage.
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Items List */}
                     < div className="space-y-4 mb-8" >

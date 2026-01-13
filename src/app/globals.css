@@ -97,33 +97,56 @@ button {
   .animate-fade-in {
     animation: fadeIn 0.5s ease-out forwards;
   }
+
   .animate-fade-in-up {
     animation: fadeInUp 0.7s ease-out forwards;
   }
+
   .animate-float {
     animation: float 3s ease-in-out infinite;
   }
+
   .delay-100 {
     animation-delay: 100ms;
   }
+
   .delay-200 {
     animation-delay: 200ms;
   }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 /* Luxury Tweaks */
@@ -150,13 +173,76 @@ button {
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 10px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #ff6a00;
+}
+
+/* Custom Payment Pin */
+.custom-payment-pin {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* transform: translate(-50%, -100%); REMOVED to avoid Leaflet conflict */
+  /* Bottom point is anchor */
+}
+
+.google-maps-pin-correction {
+  transform: translate(-50%, -100%);
+}
+
+.pin-square {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #f3f4f6;
+  position: relative;
+  z-index: 10;
+}
+
+.pin-stick {
+  width: 3px;
+  height: 16px;
+  background: black;
+  margin-top: -2px;
+  z-index: 5;
+}
+
+.pin-base {
+  width: 14px;
+  height: 14px;
+  background: #dc2626;
+  /* red-600 */
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  margin-top: -2px;
+  z-index: 6;
+}
+
+.pin-icon {
+  width: 20px;
+  height: 20px;
+  fill: black;
+}
+
+/* Leaflet Specific Override */
+.leaflet-div-icon.custom-pin-icon {
+  background: transparent !important;
+  border: none !important;
 }

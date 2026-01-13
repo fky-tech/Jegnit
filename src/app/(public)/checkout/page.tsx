@@ -3,7 +3,7 @@ import { useCart } from '@/context/CartContext';
 import { calculateDeliveryFee } from '@/utils/delivery';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase';
-import { Loader, CheckCircle, Star, ShoppingBag, Check, Copy } from 'lucide-react';
+import { Loader, CheckCircle, Star, ShoppingBag, Check, Copy, Upload, X } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
@@ -103,7 +103,8 @@ export default function CheckoutPage() {
         address: '',
         payment: 'cod',
         latitude: null as number | null,
-        longitude: null as number | null
+        longitude: null as number | null,
+        screenshot_img: ''
     });
 
     const [deliveryFee, setDeliveryFee] = useState(0); // Default to 0
@@ -181,7 +182,8 @@ export default function CheckoutPage() {
                 status: 'pending',
                 items: items,
                 total: cartTotal + deliveryFee,
-                fees: { subtotal: cartTotal, shipping: deliveryFee, total: cartTotal + deliveryFee }
+                fees: { subtotal: cartTotal, shipping: deliveryFee, total: cartTotal + deliveryFee },
+                screenshot_img: formData.screenshot_img
             };
 
             // Use API route to bypass RLS issues securely
@@ -420,23 +422,113 @@ export default function CheckoutPage() {
                                         )}
                                     </label>
 
-                                    {/* Payment Instruction Popup */}
                                     {showPaymentInstruction && (formData.payment === 'telebirr' || formData.payment === 'cbe' || formData.payment === 'abyssinia') && (
                                         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-                                            <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl text-center transform animate-in zoom-in-95">
+                                            <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl text-center transform animate-in zoom-in-95 relative">
+                                                <button
+                                                    onClick={() => setShowPaymentInstruction(false)}
+                                                    className="absolute top-4 right-4 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+                                                >
+                                                    <X className="w-5 h-5 text-gray-500" />
+                                                </button>
+
                                                 <div className="w-16 h-16 bg-orange-100 text-[#ff6a00] rounded-full flex items-center justify-center mx-auto mb-6">
                                                     <Star className="w-8 h-8 fill-current" />
                                                 </div>
-                                                <h3 className="text-xl font-bold text-gray-900 mb-4">Payment Confirmation Required</h3>
-                                                <p className="text-gray-600 mb-8 leading-relaxed">
-                                                    Please take a screenshot of your payment for confirmation. We will ship your order as soon as the payment is received.
+                                                <h3 className="text-xl font-bold text-gray-900 mb-2">Payment Confirmation</h3>
+
+                                                {/* Account Info Display */}
+                                                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6">
+                                                    <p className="text-xs text-gray-500 uppercase font-bold tracking-widest mb-1">
+                                                        {formData.payment === 'telebirr' ? 'Telebirr Account' :
+                                                            formData.payment === 'cbe' ? 'CBE Account' : 'Abyssinia Account'}
+                                                    </p>
+                                                    <div className="flex items-center justify-center gap-2">
+                                                        <span className="text-xl font-black text-[#ff6a00]">
+                                                            {formData.payment === 'telebirr' ? '+251 91 178 4541' :
+                                                                formData.payment === 'cbe' ? '1000235004694' : '207070629'}
+                                                        </span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                copyToClipboard(
+                                                                    formData.payment === 'telebirr' ? '+251911784541' :
+                                                                        formData.payment === 'cbe' ? '1000235004694' : '207070629'
+                                                                );
+                                                            }}
+                                                            className="p-1.5 hover:bg-white rounded-lg transition-colors shadow-sm"
+                                                        >
+                                                            <Copy className="w-4 h-4 text-gray-400 hover:text-[#ff6a00]" />
+                                                        </button>
+                                                    </div>
+                                                    {formData.payment === 'abyssinia' && <p className="text-xs font-bold text-gray-700 mt-1">Jegnit Luxury</p>}
+                                                </div>
+
+                                                <p className="text-gray-600 mb-6 leading-relaxed text-sm">
+                                                    We will ship your order as soon as the payment is received.
+                                                    <br />
+                                                    <span className="text-red-500 font-bold">(Please take a screenshot of your payment for confirmation.)</span>
                                                 </p>
+
+                                                <label className="block w-full mb-6 cursor-pointer group">
+                                                    <div className={`p-4 border-2 border-dashed rounded-xl flex flex-col items-center gap-2 transition-colors ${formData.screenshot_img ? 'border-green-500 bg-green-50' : 'border-gray-300 hover:border-[#ff6a00] hover:bg-orange-50'}`}>
+                                                        {formData.screenshot_img ? (
+                                                            <>
+                                                                <CheckCircle className="w-8 h-8 text-green-500" />
+                                                                <span className="text-sm font-bold text-green-700">Screenshot Uploaded!</span>
+                                                                <span className="text-xs text-green-600">Click to change</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Upload className="w-8 h-8 text-gray-400 group-hover:text-[#ff6a00]" />
+                                                                <span className="text-sm font-bold text-gray-600 group-hover:text-[#ff6a00]">Upload Payment Screenshot</span>
+                                                                <span className="text-[10px] text-gray-400">Tap to select image</span>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        className="hidden"
+                                                        onChange={async (e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (!file) return;
+
+                                                            try {
+                                                                setSubmitting(true);
+                                                                const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
+                                                                const { data, error } = await supabase.storage
+                                                                    .from('order-screenshots')
+                                                                    .upload(fileName, file);
+
+                                                                if (error) throw error;
+
+                                                                const publicUrl = `https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/order-screenshots/${fileName}`;
+                                                                setFormData(prev => ({ ...prev, screenshot_img: publicUrl }));
+                                                                addNotification('Screenshot uploaded successfully', 'success');
+                                                            } catch (err: any) {
+                                                                console.error(err);
+                                                                addNotification('Upload failed: ' + err.message, 'error');
+                                                            } finally {
+                                                                setSubmitting(false);
+                                                            }
+                                                        }}
+                                                    />
+                                                </label>
+
                                                 <button
                                                     type="button"
-                                                    onClick={() => setShowPaymentInstruction(false)}
-                                                    className="w-full py-3 bg-[#ff6a00] text-white font-bold rounded-xl hover:bg-[#ff8533] transition-colors"
+                                                    onClick={() => {
+                                                        if (!formData.screenshot_img) {
+                                                            addNotification('Please upload the payment screenshot first!', 'error');
+                                                            return;
+                                                        }
+                                                        setShowPaymentInstruction(false);
+                                                    }}
+                                                    className={`w-full py-3 text-white font-bold rounded-xl transition-colors ${formData.screenshot_img ? 'bg-[#ff6a00] hover:bg-[#ff8533]' : 'bg-gray-300 cursor-not-allowed'}`}
                                                 >
-                                                    OK, I Understand
+                                                    Confirm & Continue
                                                 </button>
                                             </div>
                                         </div>
