@@ -360,7 +360,7 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
                         <div className="fixed inset-0 z-[10000] bg-black/95 backdrop-blur-sm flex flex-col items-center justify-center p-4 animate-in fade-in duration-200">
                             <button
                                 onClick={() => setShowScreenshotLightbox(false)}
-                                className="absolute top-4 right-4 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors"
+                                className="absolute top-4 right-4 z-[10001] p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors"
                             >
                                 <X className="w-6 h-6" />
                             </button>
