@@ -186,12 +186,12 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
             <div className="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity" onClick={onClose} />
             <div className="relative w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
                 {/* Modal Header */}
-                <div className="p-6 bg-gradient-to-r from-gray-900 to-gray-800 text-white flex justify-between items-center">
+                <div className="sticky top-0 z-20 p-6 bg-gradient-to-r from-gray-900 to-gray-800 text-white flex justify-between items-center">
                     <div>
                         <h3 className="text-xl font-bold">Order Details</h3>
                         <p className="text-xs text-gray-400 font-mono tracking-widest mt-1">ID: #{order.id}</p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors z-10">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
