@@ -217,10 +217,40 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
         setSizes(newSizes);
     };
 
-    const handleRemoveColorImage = (colorName: string, imgIdx: number) => {
+    const handleRemoveColorImage = async (colorName: string, imgIdx: number) => {
+        const color = colors.find(c => c.name === colorName);
+        if (!color) return;
+
+        const imageUrl = color.images[imgIdx];
+        if (!imageUrl) return;
+
+        // Extract filename from URL
+        const fileName = imageUrl.split('/').pop();
+        if (fileName) {
+            try {
+                // Delete from Supabase Storage
+                const { error } = await supabase
+                    .storage
+                    .from('product-images')
+                    .remove([fileName]);
+
+                if (error) {
+                    console.error('Storage delete error:', error);
+                    addNotification('Failed to delete image from storage', 'error');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error deleting image:', error);
+                addNotification('Failed to delete image', 'error');
+                return;
+            }
+        }
+
+        // Update state to remove image from UI
         setColors(prev => prev.map(c =>
             c.name === colorName ? { ...c, images: c.images.filter((_, j) => j !== imgIdx) } : c
         ));
+        addNotification('Image deleted successfully', 'success');
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -516,7 +546,29 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                     <img src={formData.img} alt="Main Product" className="w-full h-full object-cover" />
                                     <button
                                         type="button"
-                                        onClick={() => setFormData(prev => ({ ...prev, img: '' }))}
+                                        onClick={async () => {
+                                            const fileName = formData.img.split('/').pop();
+                                            if (fileName) {
+                                                try {
+                                                    const { error } = await supabase
+                                                        .storage
+                                                        .from('product-images')
+                                                        .remove([fileName]);
+
+                                                    if (error) {
+                                                        console.error('Storage delete error:', error);
+                                                        addNotification('Failed to delete image from storage', 'error');
+                                                        return;
+                                                    }
+                                                } catch (error) {
+                                                    console.error('Error deleting image:', error);
+                                                    addNotification('Failed to delete image', 'error');
+                                                    return;
+                                                }
+                                            }
+                                            setFormData(prev => ({ ...prev, img: '' }));
+                                            addNotification('Image deleted successfully', 'success');
+                                        }}
                                         className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
                                         title="Remove Image"
                                     >
