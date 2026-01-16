@@ -149,39 +149,49 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
     const [uploading, setUploading] = useState(false);
     const BASE_IMAGE_URL = 'https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/';
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, colorIndex?: number) => {
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, colorIndex?: number, isMainImage: boolean = false) => {
         if (!e.target.files || e.target.files.length === 0) return;
 
         setUploading(true);
-        const file = e.target.files[0];
-        const fileName = `${Date.now()}-${file.name}`; // Avoid collisions
+        const files = Array.from(e.target.files); // Convert FileList to array
+        const uploadedUrls: string[] = [];
 
         try {
-            // Upload to Supabase Storage
-            const { error } = await supabase
-                .storage
-                .from('product-images')
-                .upload(fileName, file, {
-                    upsert: true
-                });
+            // Upload all selected files
+            for (const file of files) {
+                const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}-${file.name}`;
 
-            if (error) throw error;
+                const { error } = await supabase
+                    .storage
+                    .from('product-images')
+                    .upload(fileName, file, {
+                        upsert: true
+                    });
 
-            const publicUrl = `${BASE_IMAGE_URL}${fileName}`;
+                if (error) throw error;
 
-            if (colorIndex !== undefined || activeColorTab) {
+                const publicUrl = `${BASE_IMAGE_URL}${fileName}`;
+                uploadedUrls.push(publicUrl);
+            }
+
+            // Update state based on context
+            if (isMainImage) {
+                // Explicitly for main image - only use the first uploaded file
+                setFormData(prev => ({ ...prev, img: uploadedUrls[0] }));
+            } else if (colorIndex !== undefined || activeColorTab) {
+                // For color images
                 const targetColor = colorIndex !== undefined ? colors[colorIndex]?.name : activeColorTab;
                 setColors(prev => {
                     const existing = prev.find(c => c.name === targetColor);
                     if (existing) {
-                        return prev.map(c => c.name === targetColor ? { ...c, images: [...c.images, publicUrl] } : c);
+                        return prev.map(c => c.name === targetColor ? { ...c, images: [...c.images, ...uploadedUrls] } : c);
                     } else {
-                        return [...prev, { name: targetColor!, images: [publicUrl] }];
+                        return [...prev, { name: targetColor!, images: uploadedUrls }];
                     }
                 });
-            } else {
-                setFormData(prev => ({ ...prev, img: publicUrl }));
             }
+
+            addNotification(`Successfully uploaded ${files.length} image(s)`, 'success');
 
         } catch (error: any) {
             console.error('Upload Error:', error);
@@ -432,11 +442,12 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                                         </div>
                                                         <label className={`flex items-center gap-2 bg-[#ff6a00] text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer hover:bg-black transition-all shadow-lg active:scale-95 ${uploading ? 'opacity-50 cursor-wait' : ''}`}>
                                                             <Upload className="w-4 h-4" />
-                                                            {uploading ? 'Wait' : 'Add Image'}
+                                                            {uploading ? 'Uploading...' : 'Add Images'}
                                                             <input
                                                                 type="file"
                                                                 className="hidden"
                                                                 accept="image/*"
+                                                                multiple
                                                                 onChange={(e) => handleImageUpload(e)} // No need for index, uses activeColorTab
                                                                 disabled={uploading}
                                                             />
@@ -493,13 +504,28 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                         type="file"
                                         className="hidden"
                                         accept="image/*"
-                                        onChange={handleImageUpload}
+                                        onChange={(e) => handleImageUpload(e, undefined, true)}
                                         disabled={uploading}
                                     />
                                 </label>
                             </div>
 
-                            <label className="block text-xs font-medium text-gray-500 mb-1">Or paste URL manually:</label>
+                            {/* Image Preview with Delete */}
+                            {formData.img && (
+                                <div className="relative aspect-[4/5] rounded-xl border border-gray-200 overflow-hidden group shadow-sm hover:shadow-md transition-all">
+                                    <img src={formData.img} alt="Main Product" className="w-full h-full object-cover" />
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData(prev => ({ ...prev, img: '' }))}
+                                        className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                                        title="Remove Image"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            )}
+
+                            <label className="block text-xs font-medium text-gray-500 mb-1 mt-3">Or paste URL manually:</label>
                             <input
                                 type="url"
                                 placeholder="https://..."
@@ -507,12 +533,6 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                 value={formData.img}
                                 onChange={e => setFormData({ ...formData, img: e.target.value })}
                             />
-                            {formData.img && (
-                                <div className="mt-2 w-full h-32 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 relative">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={formData.img} alt="Preview" className="w-full h-full object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                                </div>
-                            )}
                         </div>
 
                         <div className="flex items-center gap-2 pt-2">
@@ -568,7 +588,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                         {loading ? <Loader className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Save Product</>}
                     </button>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

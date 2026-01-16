@@ -76,7 +76,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     const discountedPrice = discount > 0 ? currentPrice * (1 - discount / 100) : currentPrice;
 
     const [currentImage, setCurrentImage] = useState<string>(
-        colorOptions[0]?.images?.[0] || product.img
+        colorOptions[0]?.images?.[0] || '' // Don't fall back to product.img for public display
     );
 
     // Sync image when color or index changes
@@ -85,9 +85,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         if (color && color.images.length > 0) {
             setCurrentImage(color.images[currentImageIndex % color.images.length]);
         } else {
-            setCurrentImage(product.img);
+            setCurrentImage(''); // No fallback to product.img
         }
-    }, [selectedColor, currentImageIndex, colorOptions, product.img]);
+    }, [selectedColor, currentImageIndex, colorOptions]);
 
     const handleSizeSelect = (sizeObj: { size: string, price: string }) => {
         setSelectedSize(sizeObj.size);
@@ -121,6 +121,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         addToCart(product, selectedSize, discountedPrice, selectedColor, currentImage);
         addNotification(`Added ${product.name} to cart!`, 'success');
     };
+
+    // Don't render if no color images exist (main image should not be shown on public site)
+    if (!colorOptions.length || !colorOptions.some(c => c.images && c.images.length > 0)) {
+        return null;
+    }
 
     return (
         <>
