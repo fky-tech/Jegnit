@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { getCdnUrl } from '@/utils/cdn';
 
 export default function AboutPage() {
     return (
@@ -63,7 +64,7 @@ export default function AboutPage() {
                         <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                                src="https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/hero.jpg"
+                                src={getCdnUrl("https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/hero.jpg")}
                                 alt="Jegnit Model"
                                 className="object-cover w-full h-full hover:scale-105 transition-transform duration-700"
                             />
@@ -74,7 +75,7 @@ export default function AboutPage() {
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src="https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png" className="w-full h-full object-cover" />
+                                    <img src={getCdnUrl("https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png")} className="w-full h-full object-cover" />
                                 </div>
                                 <div>
                                     <p className="text-xs font-bold text-gray-900 uppercase">Jegnit Team</p>

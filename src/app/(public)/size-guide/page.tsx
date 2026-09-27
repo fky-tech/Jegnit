@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Ruler, Search, ChevronRight, HelpCircle, X, ArrowRight, Sparkles, MoveRight } from 'lucide-react';
 import { supabase } from '@/utils/supabase';
+import { getCdnUrl } from '@/utils/cdn';
 
 interface SizeGuide {
     id: string;
@@ -120,7 +121,7 @@ export default function SizeGuidePage() {
                                 >
                                     <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-gray-50 mb-5 relative">
                                         <img
-                                            src={guide.products?.img || ''}
+                                            src={getCdnUrl(guide.products?.img)}
                                             alt={guide.products?.name || ''}
                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
                                         />
@@ -208,7 +209,7 @@ export default function SizeGuidePage() {
                         {/* Modal Header */}
                         <div className="relative h-44 md:h-48 bg-gray-950 overflow-hidden flex items-end">
                             <div className="absolute inset-0 bg-gradient-to-t from-gray-950 to-transparent z-10" />
-                            <img src={selectedGuide.products?.img || ''} alt="" className="absolute inset-0 w-full h-full object-cover opacity-60 grayscale-[0.5]" />
+                            <img src={getCdnUrl(selectedGuide.products?.img)} alt="" className="absolute inset-0 w-full h-full object-cover opacity-60 grayscale-[0.5]" />
 
                             <button
                                 onClick={() => setModalOpen(false)}

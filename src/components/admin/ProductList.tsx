@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Plus, Trash2, Edit, Check, X as XIcon } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 import ProductModal from './ProductModal';
+import { getCdnUrl } from '@/utils/cdn';
 
 interface ProductListProps {
     initialProducts: any[];
@@ -121,7 +122,7 @@ export default function ProductList({ initialProducts }: ProductListProps) {
                                         <td className="px-6 py-4">
                                             <div className="w-12 h-12 rounded-xl overflow-hidden border border-gray-100 shadow-sm group-hover:shadow-md transition-all">
                                                 <img
-                                                    src={p.img || '/placeholder.png'}
+                                                    src={getCdnUrl(p.img) || '/placeholder.png'}
                                                     alt={p.name}
                                                     className="w-full h-full object-cover"
                                                 />

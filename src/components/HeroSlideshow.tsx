@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { getCdnUrl } from '@/utils/cdn';
 
 interface HeroImage {
     id: string;
@@ -14,7 +15,7 @@ export default function HeroSlideshow() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
 
-    const fallbackImage = 'https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/hero.jpg';
+    const fallbackImage = getCdnUrl('https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/hero.jpg');
 
     useEffect(() => {
         async function fetchHeroImages() {
@@ -80,7 +81,7 @@ export default function HeroSlideshow() {
                         }`}
                 >
                     <img
-                        src={img.image_url}
+                        src={getCdnUrl(img.image_url)}
                         alt={`Hero Slide ${idx + 1}`}
                         className="w-full h-full object-cover"
                         onError={(e) => {

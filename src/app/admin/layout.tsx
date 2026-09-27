@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, ShoppingBag, Package, Users, LogOut, MessageSquare, Menu, X, Star, Image as ImageIcon, Ruler, Eye, EyeOff } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import NotificationBell from '@/components/admin/NotificationBell';
+import { getCdnUrl } from '@/utils/cdn';
 import { NotificationProvider, useNotification } from '@/context/NotificationContext';
 
 export default function AdminLayout({
@@ -128,7 +129,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
             <div className="md:hidden fixed top-0 w-full text-gray-900 z-[500] px-4 py-3 flex items-center justify-between">
                 <div className="absolute inset-0 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm -z-10" />
                 <div className="flex items-center gap-2">
-                    <img src="https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png" alt="Logo" className="h-8 w-auto" />
+                    <img src={getCdnUrl("https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png")} alt="Logo" className="h-8 w-auto" />
                     <span className="font-black uppercase tracking-widest text-[#ff6a00]">Jegnit</span>
                 </div>
                 <div className="flex items-center gap-3">
@@ -164,7 +165,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                 {/* Sidebar Header */}
                 <div className={`p-6 border-b border-white/10 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} gap-3 transition-all duration-300 h-24`}>
                     <div className={`flex items-center gap-3 transition-opacity duration-300 ${isCollapsed ? 'hidden' : 'flex'}`}>
-                        <img src="https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png" alt="Logo" className="h-10 w-auto" />
+                        <img src={getCdnUrl("https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png")} alt="Logo" className="h-10 w-auto" />
                         {!isCollapsed && (
                             <div className="animate-in fade-in slide-in-from-left-4 duration-500">
                                 <h2 className="text-xl font-black uppercase tracking-[0.2em] text-[#ff6a00]">Jegnit</h2>

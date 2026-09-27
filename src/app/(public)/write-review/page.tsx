@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase';
+import { getCdnUrl } from '@/utils/cdn';
 import { Search, Star, MessageSquare, Send, X, Loader } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 
@@ -114,7 +115,7 @@ export default function WriteReviewPage() {
                                 <div className="aspect-square relative overflow-hidden bg-gray-100">
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img
-                                        src={product.img || product.images?.[0] || 'https://via.placeholder.com/400'}
+                                        src={getCdnUrl(product.img || product.images?.[0]) || 'https://via.placeholder.com/400'}
                                         alt={product.name}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     />

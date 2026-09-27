@@ -3,6 +3,7 @@ import { useCart } from '@/context/CartContext';
 import { calculateDeliveryFee } from '@/utils/delivery';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase';
+import { getCdnUrl } from '@/utils/cdn';
 import { Loader, CheckCircle, Star, ShoppingBag, Check, Copy, Upload, X } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 import Link from 'next/link';
@@ -546,7 +547,7 @@ export default function CheckoutPage() {
                                 {items.map(item => (
                                     <div key={item.id} className="flex gap-3 text-sm">
                                         <div className="w-12 h-12 bg-gray-100 rounded overflow-hidden flex-shrink-0">
-                                            <img src={item.img} className="w-full h-full object-cover" />
+                                            <img src={getCdnUrl(item.img)} className="w-full h-full object-cover" />
                                         </div>
                                         <div className="flex-1">
                                             <p className="font-bold line-clamp-1">{item.name}</p>

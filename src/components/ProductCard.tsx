@@ -4,6 +4,7 @@ import { ShoppingBag, X, Maximize2, Star, ChevronLeft, ChevronRight } from 'luci
 import { useNotification } from '@/context/NotificationContext';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
+import { getCdnUrl } from '@/utils/cdn';
 
 interface ProductCardProps {
     product: {
@@ -56,7 +57,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         colorOptions = parsed.map(c => ({
             name: c.name || 'Black',
-            images: c.images || (c.img ? [c.img] : [])
+            images: (c.images || (c.img ? [c.img] : [])).map((img: string) => getCdnUrl(img))
         }));
     } catch {
         colorOptions = [];
@@ -161,7 +162,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                             </>
                         )}
                         <img
-                            src={currentImage || '/placeholder.png'}
+                            src={getCdnUrl(currentImage) || '/placeholder.png'}
                             alt={product.name}
                             className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl animate-fade-in-up"
                         />
@@ -197,7 +198,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     )}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                        src={currentImage || '/placeholder.png'}
+                        src={getCdnUrl(currentImage) || '/placeholder.png'}
                         alt={product.name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />

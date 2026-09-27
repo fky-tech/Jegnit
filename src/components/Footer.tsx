@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react';
 import { FaTiktok, FaTelegramPlane } from 'react-icons/fa';
+import { getCdnUrl } from '@/utils/cdn';
 
 export default function Footer() {
     return (
@@ -11,7 +12,7 @@ export default function Footer() {
                     <div className="space-y-6">
                         <Link href="/" className="flex items-center gap-3 justify-center md:justify-start">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src="https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png" alt="Logo" className="h-10 w-auto" />
+                            <img src={getCdnUrl("https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png")} alt="Logo" className="h-10 w-auto" />
                             <span className="text-3xl font-bold tracking-tighter uppercase">
                                 <span>JEG</span>NIT
                             </span>

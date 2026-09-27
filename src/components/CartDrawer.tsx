@@ -2,6 +2,7 @@
 import { X, Minus, Plus, Trash2 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
+import { getCdnUrl } from '@/utils/cdn';
 
 export default function CartDrawer() {
     const { items, isDrawerOpen, toggleDrawer, removeFromCart, updateQuantity, cartTotal } = useCart();
@@ -40,7 +41,7 @@ export default function CartDrawer() {
                             items.map((item) => (
                                 <div key={item.id} className="flex gap-4 bg-gray-50 p-4 rounded-xl">
                                     <div className="w-20 h-20 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
-                                        <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                                        <img src={getCdnUrl(item.img)} alt={item.name} className="w-full h-full object-cover" />
                                     </div>
                                     <div className="flex-1">
                                         <div className="flex justify-between items-start mb-1">

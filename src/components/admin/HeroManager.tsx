@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Trash2, Loader, Upload, Check, X as XIcon, Image as ImageIcon } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 import { supabase } from '@/utils/supabase';
+import { getCdnUrl } from '@/utils/cdn';
 
 interface HeroImage {
     id: string;
@@ -159,7 +160,7 @@ export default function HeroManager() {
                     images.map((img) => (
                         <div key={img.id} className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden group">
                             <div className="relative aspect-[16/9] overflow-hidden">
-                                <img src={img.image_url} alt="Hero" className="w-full h-full object-cover" />
+                                <img src={getCdnUrl(img.image_url)} alt="Hero" className="w-full h-full object-cover" />
                                 <div className="absolute inset-0 flex items-center justify-center gap-4">
                                     <button
                                         onClick={() => toggleActive(img)}

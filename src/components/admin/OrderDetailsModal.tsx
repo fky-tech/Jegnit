@@ -1,6 +1,7 @@
 import { X, User, Phone, MapPin, CreditCard, DollarSign, Package, Copy, Check, Globe, Maximize2 } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 import { useRef, useState, useEffect } from 'react';
+import { getCdnUrl } from '@/utils/cdn';
 import dynamic from 'next/dynamic';
 import { createPortal } from 'react-dom';
 
@@ -338,7 +339,7 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
                                         className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden border border-gray-200 cursor-zoom-in hover:opacity-90 transition-opacity"
                                     >
                                         <img
-                                            src={order.screenshot_img}
+                                            src={getCdnUrl(order.screenshot_img)}
                                             alt="Payment Proof"
                                             className="w-full h-full object-contain"
                                         />
@@ -367,7 +368,7 @@ export default function OrderDetailsModal({ order, onClose, getStatusInfo }: Ord
 
                             <div className="relative max-w-5xl w-full h-full flex flex-col items-center justify-center">
                                 <img
-                                    src={order.screenshot_img}
+                                    src={getCdnUrl(order.screenshot_img)}
                                     alt="Payment Proof Fullscreen"
                                     className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
                                     onLoad={() => {

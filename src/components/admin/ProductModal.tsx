@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { X, Save, Loader, Plus, Trash2, Upload } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 import { supabase } from '@/utils/supabase';
+import { getCdnUrl } from '@/utils/cdn';
 
 interface ProductModalProps {
     isOpen: boolean;
@@ -488,7 +489,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                                                         <div className="grid grid-cols-3 gap-4">
                                                             {colorObj.images.map((img, imgIdx) => (
                                                                 <div key={imgIdx} className="relative aspect-[4/5] rounded-[1.5rem] border border-gray-100 overflow-hidden group/img shadow-sm hover:shadow-2xl transition-all scale-in border-2 hover:border-[#ff6a00]/40">
-                                                                    <img src={img} alt="" className="w-full h-full object-cover" />
+                                                                    <img src={getCdnUrl(img)} alt="" className="w-full h-full object-cover" />
                                                                     <button
                                                                         type="button"
                                                                         onClick={() => handleRemoveColorImage(activeColorTab, imgIdx)}
@@ -543,7 +544,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, initialData }:
                             {/* Image Preview with Delete */}
                             {formData.img && (
                                 <div className="relative aspect-[4/5] rounded-xl border border-gray-200 overflow-hidden group shadow-sm hover:shadow-md transition-all">
-                                    <img src={formData.img} alt="Main Product" className="w-full h-full object-cover" />
+                                    <img src={getCdnUrl(formData.img)} alt="Main Product" className="w-full h-full object-cover" />
                                     <button
                                         type="button"
                                         onClick={async () => {
