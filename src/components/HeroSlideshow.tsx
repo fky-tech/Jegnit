@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getCdnUrl } from '@/utils/cdn';
+import Image from 'next/image';
 
 interface HeroImage {
     id: string;
@@ -80,13 +81,14 @@ export default function HeroSlideshow() {
                     className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
                         }`}
                 >
-                    <img
+                    <Image
                         src={getCdnUrl(img.image_url)}
                         alt={`Hero Slide ${idx + 1}`}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                            e.currentTarget.src = 'https://images.unsplash.com/photo-1596486489709-77137e3164d9?auto=format&fit=crop&q=80&w=1000';
-                        }}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        priority={idx === 0}
+                        quality={80}
+                        className="object-cover"
                     />
                 </div>
             ))}
@@ -96,26 +98,33 @@ export default function HeroSlideshow() {
                 <>
                     <button
                         onClick={prevSlide}
+                        aria-label="Previous hero slide"
                         className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 bg-white/20 backdrop-blur-md text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/40"
                     >
                         <ChevronLeft className="w-6 h-6" />
                     </button>
                     <button
                         onClick={nextSlide}
+                        aria-label="Next hero slide"
                         className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 bg-white/20 backdrop-blur-md text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/40"
                     >
                         <ChevronRight className="w-6 h-6" />
                     </button>
 
                     {/* Indicators */}
-                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-1">
                         {images.map((_, idx) => (
                             <button
                                 key={idx}
                                 onClick={() => setCurrentIndex(idx)}
-                                className={`w-2 h-2 rounded-full transition-all ${idx === currentIndex ? 'bg-white w-6' : 'bg-white/40'
-                                    }`}
-                            />
+                                aria-label={`Go to slide ${idx + 1}`}
+                                className="p-2 flex items-center justify-center"
+                            >
+                                <span
+                                    className={`h-2 rounded-full transition-all block ${idx === currentIndex ? 'bg-white w-6' : 'bg-white/50 w-2'
+                                        }`}
+                                />
+                            </button>
                         ))}
                     </div>
                 </>

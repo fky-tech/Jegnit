@@ -12,7 +12,7 @@ export default function Footer() {
                     <div className="space-y-6">
                         <Link href="/" className="flex items-center gap-3 justify-center md:justify-start">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={getCdnUrl("https://fbgmwoldofhnlfnqfsug.supabase.co/storage/v1/object/public/product-images/logo.png")} alt="Logo" className="h-10 w-auto" />
+                            <img src="/logo.png" alt="Jegnit Logo" width={40} height={40} className="h-10 w-auto" />
                             <span className="text-3xl font-bold tracking-tighter uppercase">
                                 <span>JEG</span>NIT
                             </span>
@@ -21,16 +21,16 @@ export default function Footer() {
                             Luxury shapewear designed to empower and sculpt. Experience the perfect blend of comfort and elegance.
                         </p>
                         <div className="flex gap-4 justify-center md:justify-start">
-                            <a href="https://www.instagram.com/jegnit_shapewear?igsh=Y2RhZnRpNGZwdXcz&utm_source=qr" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors">
+                            <a href="https://www.instagram.com/jegnit_shapewear?igsh=Y2RhZnRpNGZwdXcz&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Visit Jegnit on Instagram" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors">
                                 <Instagram className="w-5 h-5" />
                             </a>
-                            <a href="https://www.facebook.com/share/1G5MSvr6zA/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors">
+                            <a href="https://www.facebook.com/share/1G5MSvr6zA/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="Visit Jegnit on Facebook" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors">
                                 <Facebook className="w-5 h-5" />
                             </a>
-                            <a href="https://www.tiktok.com/@jegnitshapewear?_r=1&_t=ZM-92ZhHHd2Yto" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors" title="TikTok">
+                            <a href="https://www.tiktok.com/@jegnitshapewear?_r=1&_t=ZM-92ZhHHd2Yto" target="_blank" rel="noopener noreferrer" aria-label="Visit Jegnit on TikTok" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors" title="TikTok">
                                 <FaTiktok className="w-5 h-5" />
                             </a>
-                            <a href="https://t.me/jegenit1" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors" title="Telegram">
+                            <a href="https://t.me/jegenit1" target="_blank" rel="noopener noreferrer" aria-label="Visit Jegnit on Telegram" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#ff6a00] transition-colors" title="Telegram">
                                 <FaTelegramPlane className="w-5 h-5" />
                             </a>
                         </div>

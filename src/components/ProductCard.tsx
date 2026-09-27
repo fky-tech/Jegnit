@@ -139,6 +139,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     <button
                         className="absolute top-8 right-8 md:top-10 md:right-10 text-white hover:text-[#ff6a00] transition-colors bg-white/20 hover:bg-white/30 p-3 rounded-full backdrop-blur-md shadow-2xl z-[2001]"
                         onClick={() => setShowImageModal(false)}
+                        aria-label="Close full size image modal"
                         title="Close"
                     >
                         <X className="w-8 h-8 md:w-10 md:h-10" />
@@ -149,12 +150,14 @@ export default function ProductCard({ product }: ProductCardProps) {
                             <>
                                 <button
                                     onClick={prevImage}
+                                    aria-label="Previous preview image"
                                     className="absolute left-4 p-4 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all z-[2002]"
                                 >
                                     <ChevronLeft className="w-8 h-8" />
                                 </button>
                                 <button
                                     onClick={nextImage}
+                                    aria-label="Next preview image"
                                     className="absolute right-4 p-4 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all z-[2002]"
                                 >
                                     <ChevronRight className="w-8 h-8" />
@@ -164,6 +167,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                         <img
                             src={getCdnUrl(currentImage) || '/placeholder.png'}
                             alt={product.name}
+                            loading="lazy"
                             className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl animate-fade-in-up"
                         />
                         {colorOptions.find(c => c.name === selectedColor)?.images.length! > 1 && (
@@ -187,12 +191,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                     onClick={() => setShowImageModal(true)}
                 >
                     {product.bestseller && (
-                        <span className="absolute top-3 left-3 bg-[#ff6a00] text-white text-[10px] font-bold px-2 py-1 rounded shadow-md z-10">
+                        <span className="absolute top-3 left-3 bg-[#c84800] text-white text-[10px] font-bold px-2 py-1 rounded shadow-md z-10">
                             BESTSELLER
                         </span>
                     )}
                     {(product.discount || 0) > 0 && (
-                        <span className={`absolute top-3 ${product.bestseller ? 'left-24' : 'left-3'} bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md z-10 animate-pulse`}>
+                        <span className={`absolute top-3 ${product.bestseller ? 'left-24' : 'left-3'} bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md z-10 animate-pulse`}>
                             {product.discount}% OFF
                         </span>
                     )}
@@ -200,6 +204,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                     <img
                         src={getCdnUrl(currentImage) || '/placeholder.png'}
                         alt={product.name}
+                        width={400}
+                        height={500}
+                        loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
 
@@ -208,12 +215,14 @@ export default function ProductCard({ product }: ProductCardProps) {
                         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-2 z-10">
                             <button
                                 onClick={prevImage}
+                                aria-label="Previous product image"
                                 className="p-2 bg-white/90 hover:bg-white text-gray-900 rounded-full shadow-lg backdrop-blur-md transition-all active:scale-90"
                             >
                                 <ChevronLeft className="w-4 h-4" />
                             </button>
                             <button
                                 onClick={nextImage}
+                                aria-label="Next product image"
                                 className="p-2 bg-white/90 hover:bg-white text-gray-900 rounded-full shadow-lg backdrop-blur-md transition-all active:scale-90"
                             >
                                 <ChevronRight className="w-4 h-4" />
@@ -263,9 +272,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                     )}
 
                     <div className="flex items-center gap-2 mb-3">
-                        <p className="text-[#ff6a00] font-bold text-xl">ETB {discountedPrice.toFixed(2)}</p>
+                        <p className="text-[#c84800] font-bold text-xl">ETB {discountedPrice.toFixed(2)}</p>
                         {discount > 0 && (
-                            <p className="text-gray-400 text-sm font-bold line-through">ETB {currentPrice.toFixed(2)}</p>
+                            <p className="text-gray-500 text-sm font-bold line-through">ETB {currentPrice.toFixed(2)}</p>
                         )}
                     </div>
 
@@ -273,8 +282,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                     {colorOptions.length > 0 && (
                         <div className="mb-4">
                             <div className="flex justify-between items-end mb-2">
-                                <p className="text-xs text-gray-500 font-semibold uppercase">Color</p>
-                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{selectedColor}</span>
+                                <p className="text-xs text-gray-700 font-semibold uppercase">Color</p>
+                                <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">{selectedColor}</span>
                             </div>
                             <div className="flex flex-wrap gap-3">
                                 {colorOptions.map((opt, idx) => {
@@ -289,8 +298,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                                         <button
                                             key={idx}
                                             onClick={() => handleColorSelect(opt)}
+                                            aria-label={`Select color ${opt.name}`}
                                             className={`w-8 h-8 rounded-full border-2 transition-all p-0.5 ${selectedColor === opt.name
-                                                ? 'border-[#ff6a00] scale-110 shadow-lg'
+                                                ? 'border-[#c84800] scale-110 shadow-lg'
                                                 : 'border-transparent hover:scale-105'
                                                 }`}
                                             title={opt.name}
@@ -309,15 +319,16 @@ export default function ProductCard({ product }: ProductCardProps) {
                     {/* Size Selector */}
                     {sizeOptions.length > 0 && (
                         <div className="mb-4">
-                            <p className="text-xs text-gray-500 font-semibold uppercase mb-2">Select Size</p>
+                            <p className="text-xs text-gray-700 font-semibold uppercase mb-2">Select Size</p>
                             <div className="flex flex-wrap gap-2">
                                 {sizeOptions.map((opt, idx) => (
                                     <button
                                         key={idx}
                                         onClick={() => handleSizeSelect(opt)}
+                                        aria-label={`Select size ${opt.size}`}
                                         className={`w-10 h-10 rounded border flex items-center justify-center text-sm font-bold transition-all ${selectedSize === opt.size
-                                            ? 'bg-[#ff6a00] text-white border-[#ff6a00]'
-                                            : 'bg-white text-gray-800 border-gray-200 hover:border-[#ff6a00]'
+                                            ? 'bg-[#c84800] text-white border-[#c84800]'
+                                            : 'bg-white text-gray-900 border-gray-300 hover:border-[#c84800]'
                                             }`}
                                     >
                                         {opt.size}
@@ -330,7 +341,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                     <div className="mt-auto">
                         <button
                             onClick={handleAdd}
-                            className="w-full py-3 bg-gray-900 text-white rounded-lg font-bold hover:bg-[#ff6a00] transition-colors flex items-center justify-center gap-2"
+                            aria-label={`Add ${product.name} to cart`}
+                            className="w-full py-3 bg-gray-900 text-white rounded-lg font-bold hover:bg-[#c84800] transition-colors flex items-center justify-center gap-2"
                         >
                             <ShoppingBag className="w-4 h-4" /> Add to Cart
                         </button>

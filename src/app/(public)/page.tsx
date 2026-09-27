@@ -58,8 +58,8 @@ export default function Home() {
               <Link href="/shop" className="inline-flex items-center justify-center px-8 py-3.5 bg-[#ff6a00] text-white font-bold text-base tracking-wide rounded-lg hover:bg-[#ff8533] transition-all shadow-lg shadow-orange-100">
                 Shop Collection <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
-              <Link href="/about" className="inline-flex items-center justify-center px-8 py-3.5 bg-white text-gray-900 border border-gray-200 font-bold text-base tracking-wide rounded-lg hover:bg-gray-50 transition-all">
-                Learn More
+              <Link href="/about" aria-label="Learn more about Jegnit shapewear" className="inline-flex items-center justify-center px-8 py-3.5 bg-white text-gray-900 border border-gray-200 font-bold text-base tracking-wide rounded-lg hover:bg-gray-50 transition-all">
+                Learn More About Us
               </Link>
             </div>
           </div>
@@ -79,7 +79,7 @@ export default function Home() {
           <div className="flex items-center justify-center md:justify-start gap-4 pb-4 md:pb-0 md:pr-8">
             <div className="p-3 bg-white/10 rounded-full text-[#ff6a00]"><ShieldCheck className="w-6 h-6" /></div>
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wide text-white">Premium Quality</h3>
+              <p className="font-bold text-sm uppercase tracking-wide text-white">Premium Quality</p>
               <p className="text-xs text-gray-400">Guaranteed durability</p>
             </div>
           </div>
@@ -87,7 +87,7 @@ export default function Home() {
           <div className="flex items-center justify-center md:justify-center gap-4 py-4 md:py-0 md:px-8">
             <div className="p-3 bg-white/10 rounded-full text-[#ff6a00]"><Truck className="w-6 h-6" /></div>
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wide text-white">Reliable Delivery</h3>
+              <p className="font-bold text-sm uppercase tracking-wide text-white">Reliable Delivery</p>
               <p className="text-xs text-gray-400">Fast & secure shipping</p>
             </div>
           </div>
@@ -95,7 +95,7 @@ export default function Home() {
           <div className="flex items-center justify-center md:justify-end gap-4 pt-4 md:pt-0 md:pl-8">
             <div className="p-3 bg-white/10 rounded-full text-[#ff6a00]"><Headphones className="w-6 h-6" /></div>
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wide text-white">24/7 Support</h3>
+              <p className="font-bold text-sm uppercase tracking-wide text-white">24/7 Support</p>
               <p className="text-xs text-gray-400">Here for you always</p>
             </div>
           </div>
@@ -141,7 +141,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#ff6a00] to-[#ff914d] z-0"></div>
 
         {/* Pattern Overlay */}
-        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-10 mix-blend-overlay"></div>
+        <div className="absolute inset-0 opacity-10 bg-[url('/patterns/cubes.png')] z-10 mix-blend-overlay"></div>
 
         <div className="container relative z-20 text-center text-white">
           <h2 className="text-4xl font-bold mb-6">Need Help Finding Your Fit?</h2>
